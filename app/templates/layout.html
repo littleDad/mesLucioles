@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {# imports fait maison #}
+        <title>La psycholoc</title>
+        <meta charset='UTF-8'>
+        <link rel="shortcut icon" href="/static/pic/favicon.ico">
+        
+        {# imports récupérés (donc forcément chelou, et idéalement à nettoyer) #}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="static/css/bootstrap.css" rel="stylesheet">
+        {#
+        <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+        <script type=text/javascript>
+            var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+        #}
+
+        {# for the menu #}
+        <script src="../static/js/jquery-1.11.3.min.js"></script>
+        <link href="../static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <script src="../static/js/bootstrap.min.js"></script>
+        <link href="../static/css/style.css" rel="stylesheet">
+
+        {% block script %}{% endblock %}
+    </head>
+    <body>
+
+    <div class="main">
+        <div class='navbar navbar-fixed-top'>
+            {% if not g.user.is_anonymous() %}
+                    <em class="glyphicon glyphicon-user"></em>
+                    <b>
+                        {% if g.user.firstname %}{{ g.user.firstname }}
+                        {% else %}{{ g.user.email }}
+                        {% endif %}
+                    </b>
+                    <br>
+                    <a href="{{ url_for('logout') }}">se déconnecter</a>
+            {% endif %}
+        </div>
+
+        <div class="container contenu">
+            <div class="row col-md-10">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-9 menu">
+                {# ce menu doit disparaître (se ranger dans un bandeau-haut en js) lorsque
+                l'on clique sur un élément du menu (bah oui, ça prend trop de place !) #}
+                    {% include 'menu.html' %}
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>{% block h2 %}{% endblock %}</h2>
+                    <h5><i>{% block h5 %}{% endblock %}<i></h5>
+                    <div class="btn-group btn-group-sm">
+                        {% block submenu %}{% endblock %}
+                    <!--
+                        <button class="btn btn-default" type="button">
+                            <em class="glyphicon glyphicon-align-left"></em> Left
+                        </button>
+                    -->
+                    </div>
+                </div>
+
+                <div class="col-md-12 content">
+                    {% block content %}{% endblock %}
+
+
+                {% with messages = get_flashed_messages() %}
+                <div class="flash col-md-7">
+                  {% if messages %}
+                    <ul>
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                </div>
+                {% endwith %}
+
+                </div>
+            </div>
+        </div>
+
+<!--
+        <footer>
+        <pre>
+
+
+                                              ;8:
+                                           .o888'
+                                        .od8888Y            .od8K
+                                       d888888Y  ____  _.od88888'
+                                     od888888Y'''    ''Y888888Y'
+                                _,-''Y888888;           "Y8Y'"
+                             _,;;;;;;;;;;;;;;;  ____        :
+                           ,';;;;;;;;;;;;;;;;:od88888bo.    tb
+                         .;;;;;;;;;;;;;;;;;od888888888888.  88:
+                        /;;;;;;;;;;;;;;;;;o88888888888888bo 88b
+                       /;;;;;;;;;;;;;;;;;d88888888888888888 Y88:
+                      /;;;;;;;;;;;;;;;;:8K"' MM;   ''"""Y88.'Y8'
+                     |;;;;;;;;;;;;;;;;.88bo. `"     __..d88  8b.
+                     |;;;;;;;;;88.;;;;:8888888888888888888Y  ""'MMM.
+                     |;;;;;;;;dY;;;;;;'888888888888888888Y      "MM:
+                     |;;;;;;;dY;;;;;;;;J8888888888888888Y          |
+                     |;;;;o888Yo;;;;;;;;Y8888888888888Y' __.._     |
+                      |;;;;;;;;;dY;;;;;;;;Y88888888Y'..;;;;;;;;;.._.
+                      |;;:o8888888888888888888o:;;;;;;;;;;;;;;;;;-
+                   .d888888888888888888888888888888bo;;;;;;;;,'
+                  d88888888888888888888888888888888888bo;;;'
+                 d8888888888888888888888888888888888888888b.
+                 88888888888888888888888888888888888888888888b
+                 8888888888888888888888888888888888888888888888b.
+                 Y888888888888888888888888888888888888888888888888.
+                 'Y888888888888888888888888888888888888888888888888:
+                 |;;;;;;;;;;;"Y8888888888888888888888888888888888888:
+                 |;;;;;;;;;;;;;;;;;;;"Y888888888888888888888888888888.
+                /;;;;;;;;;;;;;;;;;;;;;;;;"Y888888888888888888888888888
+               /;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Y888888888888888888888888:
+              .;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Y88888888888888888888888:
+              /;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;.-'Y888888888888888888888b
+             /;;;;;;;;;;;;;;;;;;;  '''''''      'Y888888888888888888888.
+            /;;;;;;;;;;;;;;;;;;;;.               '888888888888888888888:
+          ,;;;;;;;;;;;;;;;;;;;;;;;:                Y8888888888888888888:
+         /;;;;;;;;;;;;;;;;;;;;;;;;:.                Y888888888888888888:
+        ;;;;;;;;;;;;;;;;;;;;;;;;;;;:                 'Y8888888888888888:
+      ,;;;;;;;;;;;;;;;;;;;;;;;;;;;;:                   'Y88888888888888.
+     /;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:                 _,.o8888888888888'
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:           _,,-b88888888888888888'
+    |;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:       _.-:;o888888888888888888Y:
+    |;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:    ,-:;;;8888888888888888888888:
+    |;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' ,-:;;;;:888888888888888888888888:
+    o88888b;;;;;;;;;;;;;;;;;;;;;;;;,';;;;;;;88888888888888888888888888
+  d888888888b;;;;;;;;;;;;;;;;;;;;;';;;;;;;;888888888888888888888888888:
+ d88888888888b;;;;;;;;;;;;;;;;;;;;;;;;;;;;88888888888888888888888888888
+ Y888888888888b;;;;;;;;;;;;;;;;;;;;;;;;;;888888888888888888888888888888
+  Y888888888888;;;;;;;;;;;;;;;;;;;;;;;;;Y88888888888888888888888888888;
+   Y8888888888J;;;;;;;;;;;;;;;;;;;;;;;;;88888888888888888888888888888Y
+     Y8888888J;;;;;;;;;;;;;;;;;;;;;;;;;88888888888888888888888888888Y
+       'Y888J;;;;;;;;;;;;;;;;;;;;;;;;;888888888888888888888888888888'
+             `.;;;;;;;;;;;;;;;;;;;;;d888888888888888888888888888888'
+                '-:::::;;;;;;;;;;;d888888888888888888888888888888P
+                       ''''''''''''"""""""""""""""""""""""""""'
+        </pre>
+        </footer>
+-->
+
+    </div>
+    
+    <footer class="plein">
+        fait avec <span>❤</span> &mdash; psycholoc 2015 <em class="glyphicon glyphicon-flag"></em>
+    </footer>
+    
+    </body>
+</html>

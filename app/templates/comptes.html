@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{# 
+ToDo:
+
+  * pour les cadeaux, le total sorti doit être un espèce de "pot ou chaudron commun", il ne faut pas qu'on puisse retrouver ses petits, ni qu'on devienne combien les autres ont payé pour nous. à mon avis, le plus simple est de ne pas afficher le détail.
+
+
+#}
+
+{% block h2 %}anti-lieu de Controverses Consuméristes Contusives{% endblock %}
+{% block h5 %}ou "page des comptes"{% endblock %}
+{% block submenu %}
+    <a href="{{ url_for('comptes', spends_page='depenses') }}"
+        class="btn btn-default"
+        type="button"
+        title="touuuuuus les comptes !"
+    >
+        <em class="glyphicon glyphicon-piggy-bank"></em> dépenses
+    </a>
+    <a href="{{ url_for('comptes', spends_page='remboursements') }}"
+        class="btn btn-default"
+        type="button"
+        title="remboursements entre kopains de la CCC"
+    >
+        <em class="glyphicon glyphicon-transfer"></em> remboursements
+    </a>
+    <a href="{{ url_for('comptes', spends_page='ext_remboursements') }}"
+        class="btn btn-default"
+        type="button"
+        title="remboursement provenant d'une personne en-dehors de la CCC"
+    >
+        <em class="glyphicon glyphicon-transfer"></em> remboursements extérieurs
+    </a>
+    <a href="{{ url_for('comptes', spends_page='balances') }}"
+        class="btn btn-default"
+        type="button"
+        title="qui doit quoi, tout confondu"
+    >
+        <em class="glyphicon glyphicon-tasks"></em> balances
+    </a>
+    <a href="{{ url_for('comptes', spends_page='cadeaux') }}"
+        class="btn btn-default disabled"
+        type="button"
+        title="les cadeaux, c'est toute une histoire... ! :)"
+    >
+        <em class="glyphicon glyphicon-gift"></em> cadeaux
+    </a>
+    <a href="{{ url_for('comptes', spends_page='stats') }}"
+        class="btn btn-default disabled"
+        type="button"
+        title="un peu de suivi peut ne pas faire de mal"
+    >
+        <em class="glyphicon glyphicon-stats"></em> statistiques <span style="font-size: 7pt">(pour Liang...)</span>
+        {#
+là-dedans, ça serait bien de mettre un diagramme bâton avec MES dépenses (label et montant) sur le mois (et un autre avec mes dépenses depuis le début) !
+        #}
+    </a>
+{% endblock %}
+
+
+{% block content %}
+<div class="row clearfix col-md-10">
+
+{% include 'comptes/'+spends_page+'.html' %}
+
+</div>
+{% endblock %}

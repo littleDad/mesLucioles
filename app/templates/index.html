@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block h2 %}Page d'accueil{% endblock %}
+
+{% block content %} 
+<div class="row clearfix col-md-12">
+
+    <p>Salut
+    {% if g.user.firstname %}{{ g.user.firstname }}
+    {% else %}toi{% endif %} ! :-)</p>
+
+</div>
+
+
+{% endblock %}

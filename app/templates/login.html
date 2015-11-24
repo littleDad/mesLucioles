@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block h2 %}Authentification{% endblock %}
+
+{% block content %}
+<div class="row clearfix col-md-5">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.email.label(size=20) }}
+            {{ form.email}}
+        </div>
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password }}
+        </div>
+        {#
+        <div>
+            {{ form.remember_me }} Remember Me
+        </div>
+        #}
+        <button type="submit" class="btn btn-default">Se connecter</button>
+
+        <div>
+            <a href="{{ url_for('lostPasswd') }}">Mot de passe perdu ?</a>
+        </div>
+    </form>
+
+</div>
+
+
+{% endblock %}

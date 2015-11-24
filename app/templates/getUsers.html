@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block h2 %}Tous les profils{% endblock %}
+
+{% block content %}
+<div class="row clearfix col-md-5">
+<ul>
+    {% for user in users %}
+        <li><a href="{{ url_for('getUser', email=user.email) }}">
+        {{ user.firstname }} ({{ user.email }})</a></li>
+    {% endfor %}
+</ul>
+</div>
+{% endblock %}

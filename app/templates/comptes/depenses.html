@@ -1,0 +1,35 @@
+<table class="table table-striped">
+
+
+    <thead>
+        <tr>
+            <th>Date</th><th>Catégorie</th><th>Objet</th><th>Montant</th><th>Payeur</th><th>Ma_part</th><th><!-- modifier dépense --></th><th><!-- supprimer dépense --></th><th><!-- modifier dépense répétée si type = 'repeated' --></th>
+        </tr>
+    </thead>
+    <tbody style="background-color: red">
+    {% for depense in rows %}
+        <tr>
+            <td>{{ depense.timestamp }}</td>
+            <td>{{ depense.type }}</td> 
+            <td>{{ depense.label }}</td>
+            <td>{{ depense.total }} <em class="glyphicon glyphicon-euro"></em></td>
+            <td>
+                {% if depense.payeur.firstname %}
+                    {{ depense.payeur.firstname }}
+                {% else %}
+                    {{ depense.payeur.email }}
+                {% endif %}
+            </td>
+                
+            <td>Ma_part??</td>
+            <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-pencil"></em></a></td>
+            <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-remove"></em></a></td>
+        {% if depense.type == 'repeated' %}
+            <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-hourglass"></em></a></td>
+        {% else %}
+            <td></td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block h2 %}
+    {#<img src="{{ user.avatar }}">#}
+    utilisateur : {{ user.firstname }}
+{% endblock %}
+{% block h5 %}
+    (dernière connection : {{ user.getLastConnection() }})
+{% endblock %}
+
+{% block content %}
+<div class="row clearfix col-md-5">
+    <div>
+        {% if user.id == g.user.id %}<form action="{{ url_for('getUser', email=user.email) }}" method="post">
+            {{ form.hidden_tag() }}
+        {%endif %}
+        
+        <div class="form-group">nom :
+            {% if user.id == g.user.id %}
+                {{ form.firstname(size=24, maxlength=64) }}
+            {% else %}
+                {{ user.firstname }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">email :
+            {% if user.id == g.user.id %}
+                {{ form.email(maxlength=120) }}
+                
+                    {% for error in form.errors.email %}
+                        <div><i style="color:red">{{ error }}</i></div>
+                    {% endfor %}
+                
+            {% else %}
+                {{ user.email}}
+            {% endif %}
+        </div>
+
+        <div class="form-group">timezone (fuseau horaire) :
+            {% if user.id == g.user.id %}
+                {{ form.timezone(size=5, maxlength=5, readonly=true) }} {# not well implemented for the moment #}
+            {% else %}
+                {{ user.timezone }}
+            {% endif %}
+        </div>
+
+        {% if user.id == g.user.id %}
+            <button type="submit" class="btn btn-default">enregistrer les changements</button>
+        {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+secrets.py
+*.pyc
+env/
+mesLucioles.db
