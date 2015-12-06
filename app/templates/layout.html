@@ -2,7 +2,7 @@
 <html>
     <head>
         {# imports fait maison #}
-        <title>La psycholoc</title>
+        <title>{{ app_name }}</title>
         <meta charset='UTF-8'>
         <link rel="shortcut icon" href="/static/pic/favicon.ico">
         
@@ -45,8 +45,6 @@
                 <div class="col-md-2"></div>
 
                 <div class="col-md-9 menu">
-                {# ce menu doit disparaître (se ranger dans un bandeau-haut en js) lorsque
-                l'on clique sur un élément du menu (bah oui, ça prend trop de place !) #}
                     {% include 'menu.html' %}
                 </div>
             </div>
@@ -151,7 +149,7 @@
     </div>
     
     <footer class="plein">
-        fait avec <span>❤</span> &mdash; psycholoc 2015 <em class="glyphicon glyphicon-flag"></em>
+        codé avec <span>❤</span> pour {{ app_name }} <em class="glyphicon glyphicon-flag"></em> <a href="http://baptabl.fr/">Batoo</a>, 2015.
     </footer>
     
     </body>

@@ -10,6 +10,8 @@ from .models import User, Spending
 from functools import wraps
 from datetime import datetime
 
+app_name = coreApp.config['APP_NAME']
+
 ### BEGIN: DECORATORS ###
 @coreApp.before_request # any method that are decorated with before_request will run before the view method each time a request is received
 def before_request():
@@ -43,7 +45,7 @@ def not_found_error(error):
 @coreApp.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return render_template('500.html'), 500
+    return render_template('500.html', app_name=app_name), 500
 
 ### END: DECORATORS ###
 
@@ -54,13 +56,13 @@ def internal_error(error):
 @login_required
 def index():
     print g.user
-    return render_template('index.html', menu_not_collapsed=True)
+    return render_template('index.html', menu_not_collapsed=True, app_name=app_name)
 
 
 @coreApp.route('/thewall')
 @login_required
 def thewall():
-    return render_template('thewall.html')
+    return render_template('thewall.html', app_name=app_name)
 
 
 
@@ -80,7 +82,7 @@ def login():
                 for error in errors:
                     flash(error)
                     print error
-            return render_template('login.html', form=form)
+            return render_template('login.html', form=form, app_name=app_name)
 
 @lm.user_loader
 def loadUser(id):  #NOTE: user ids in Flask-Login are always unicode strings
@@ -138,7 +140,7 @@ def lostPasswd():
             for error in errors:
                 flash(error)
                 print error
-        return render_template('lostPasswd.html', form=form)
+        return render_template('lostPasswd.html', form=form, app_name=app_name)
 
 
 
@@ -150,7 +152,7 @@ def getUser(email):
     if user is None:
         flash('Utilisateur %s introuvable' % email)
         users = User.query.order_by('last_connection desc').all()
-        return render_template('getUsers.html', users=users)
+        return render_template('getUsers.html', users=users, app_name=app_name)
     else:
         if form.validate_on_submit():
             g.user.firstname = form.firstname.data
@@ -163,7 +165,7 @@ def getUser(email):
             form.firstname.data = g.user.firstname
             form.email.data = g.user.email
             form.timezone.data = g.user.timezone
-        return render_template('getUser.html', user=user, form=form)
+        return render_template('getUser.html', app_name=app_name, user=user, form=form)
 
 
 @coreApp.route('/getUsers')
@@ -171,7 +173,7 @@ def getUser(email):
 def getUsers():
     #pour afficher les lucioles selon l'ordre de dernière connection :
     users = User.query.order_by('last_connection desc').all()
-    return render_template('getUsers.html', users=users)
+    return render_template('getUsers.html', app_name=app_name, users=users)
 
 ### END: USER ACCESS ###
 
@@ -188,9 +190,11 @@ def comptes(spends_page):
         for row in rows:
             print row
     return render_template('comptes.html',
-                           spends_page=spends_page,
-                           rows=rows,
-                           my_rows=g.user.spends.all())
+        app_name=app_name,
+        spends_page=spends_page,
+        rows=rows,
+        my_rows=g.user.spends.all()
+    )
 
 @coreApp.route('/comptes/ajoutDepense', methods=['GET', 'POST'])
 def ajoutDepense():
@@ -212,7 +216,7 @@ def ajoutDepense():
             for error in errors:
                 flash(error)
                 print error
-        return render_template('ajoutDepense.html', form=form)
+        return render_template('ajoutDepense.html', app_name=app_name, form=form)
 
     return url_for('comptes', spends_page=session['spends_page'])
 

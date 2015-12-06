@@ -3,6 +3,7 @@
 from secrets import SECRET_KEY
 import os
 
+APP_NAME = "La Psycholoc"
 
 # activates the cross-site request forgery (CSRF) prevention
 WTF_CSRF_ENABLED = True 

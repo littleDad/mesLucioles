@@ -1,5 +1,12 @@
 #!env/bin/python2
 # -*- coding: utf8 -*-
+"""
+this admin script allows you to :
+  - add an user to the db : ./administration email password (firstname timezone)
+  - 
+
+"""
+
 
 from sys import argv
 from app import models
