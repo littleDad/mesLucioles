@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app import coreApp, db, lm
-from .forms import LoginForm, LostPasswdForm, EditUserForm
+from .forms import LoginForm, LostPasswdForm, EditUserForm, AddSpendForm
 from .models import User, Spending
 
 from functools import wraps
@@ -40,7 +40,7 @@ def login_required(f):
 #fonction inutilisée et jamais appelée ! pourquoi ? :o
 @coreApp.errorhandler(404)
 def not_found_error(error):
-    return 'pas de ça chez nous ! (erreur 404)'
+    return "pas de ça chez nous ! (erreur 404) <a href='/index'>retour à l'accueil</a>"
 
 @coreApp.errorhandler(500)
 def internal_error(error):
@@ -184,15 +184,27 @@ def getUsers():
 @coreApp.route('/comptes/<spends_page>')
 def comptes(spends_page):
     session['spends_page'] = spends_page
-    rows = []
+    Spendings = []
+    payers = []
+    times = []
+    parts = {}
     if spends_page == 'depenses':
-        rows = Spending.query.order_by('timestamp').all()
-        for row in rows:
-            print row
+        Spendings = Spending.query.order_by('timestamp').all()
+        for spending in Spendings:
+            times.append(spending.getDate(current_user))
+            payeur = User.query.filter_by(id=spending.payer_id).first().firstname
+            if payeur == "inconnu(e)":
+                payers.append(User.query.filter_by(id=spending.payer_id).first().email)
+            else:
+                payers.append(payeur)
+
     return render_template('comptes.html',
         app_name=app_name,
         spends_page=spends_page,
-        rows=rows,
+        rows=Spendings,
+        times=times,
+        payers=payers,
+        parts=parts,
         my_rows=g.user.spends.all()
     )
 
@@ -206,7 +218,7 @@ def ajoutDepense():
         newSpend.label = form.label.data
         newSpend.total = form.total.data
         newSpend.timestamp = form.timestamp.data
-        newSpend.payeur_id = form.payeur_id.data
+        newSpend.payer_id = form.payer_id.data
         newSpend.timestamp = form.timestamp.data
         db.session.add(newSpend)
         db.session.commit()
@@ -216,7 +228,7 @@ def ajoutDepense():
             for error in errors:
                 flash(error)
                 print error
-        return render_template('ajoutDepense.html', app_name=app_name, form=form)
+        return render_template('comptes/ajoutDepense.html', app_name=app_name, form=form)
 
     return url_for('comptes', spends_page=session['spends_page'])
 

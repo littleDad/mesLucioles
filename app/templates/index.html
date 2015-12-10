@@ -6,8 +6,10 @@
 <div class="row clearfix col-md-12">
 
     <p>Salut
-    {% if g.user.firstname %}{{ g.user.firstname }}
-    {% else %}toi{% endif %} ! :-)</p>
+    {% if g.user.firstname %}
+    {{ g.user.firstname }} !<br>
+    &#8594; <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}">accéder aux comptes</a>
+    {% else %}toi ! :-){% endif %}</p>
 
 </div>
 

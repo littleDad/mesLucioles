@@ -15,7 +15,7 @@
             {{ form.hidden_tag() }}
         {%endif %}
         
-        <div class="form-group">nom :
+        <div class="form-group">prénom :
             {% if user.id == g.user.id %}
                 {{ form.firstname(size=24, maxlength=64) }}
             {% else %}

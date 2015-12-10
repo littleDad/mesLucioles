@@ -41,9 +41,9 @@ class EditUserForm(Form):
             
 
 class AddSpendForm(Form):
-    type = StringField('type', validators=[DataRequired()])
+    type = StringField('Type', validators=[DataRequired()])
     label = StringField('Titre', validators=[DataRequired()])
     total = FloatField('Montant', validators=[DataRequired()])
     timestamp = StringField('Date', validators=[DataRequired()])
-    payeur_id = StringField('Payeur', validators=[DataRequired()])
+    payer_id = StringField('Payeur', validators=[DataRequired()])
     #autres

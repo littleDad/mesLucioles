@@ -3,7 +3,8 @@
 from secrets import SECRET_KEY
 import os
 
-APP_NAME = "La Psycholoc"
+#APP_NAME = "La Psycholoc"
+APP_NAME = "Hackz' your friends (beta!)"
 
 # activates the cross-site request forgery (CSRF) prevention
 WTF_CSRF_ENABLED = True 
@@ -26,3 +27,7 @@ MAIL_PASSWORD = None
 
 # administrator list
 ADMINS = ['bat@baptabl.fr', 'al.bert95@hotmail.fr']
+
+
+# allowing searches in spendings
+WHOOSH_ENABLED = True

@@ -1,4 +1,7 @@
 secrets.py
 *.pyc
+data/
 env/
 mesLucioles.db
+UML.dia.autosave
+db_repository/

@@ -8,9 +8,18 @@ ToDo:
 
 #}
 
-{% block h2 %}anti-lieu de Controverses Consuméristes Contusives{% endblock %}
-{% block h5 %}ou "page des comptes"{% endblock %}
+{% block h2 %}Livret de comptes{% endblock %}
+{% block h5 %}ou "anti-lieu de Controverses Consuméristes Contusives"{% endblock %}
 {% block submenu %}
+    {#
+    <a href="{{ url_for('comptes', spends_page='ajoutDepense') }}"
+        class="btn btn-default"
+        type="button"
+        title="ajouter une dépense"
+    >
+        <em class="glyphicon glyphicon-plus"></em> ajout dépense
+    </a>
+    #}
     <a href="{{ url_for('comptes', spends_page='depenses') }}"
         class="btn btn-default"
         type="button"
@@ -21,16 +30,9 @@ ToDo:
     <a href="{{ url_for('comptes', spends_page='remboursements') }}"
         class="btn btn-default"
         type="button"
-        title="remboursements entre kopains de la CCC"
+        title="remboursements entre lucioles"
     >
         <em class="glyphicon glyphicon-transfer"></em> remboursements
-    </a>
-    <a href="{{ url_for('comptes', spends_page='ext_remboursements') }}"
-        class="btn btn-default"
-        type="button"
-        title="remboursement provenant d'une personne en-dehors de la CCC"
-    >
-        <em class="glyphicon glyphicon-transfer"></em> remboursements extérieurs
     </a>
     <a href="{{ url_for('comptes', spends_page='balances') }}"
         class="btn btn-default"
@@ -38,6 +40,13 @@ ToDo:
         title="qui doit quoi, tout confondu"
     >
         <em class="glyphicon glyphicon-tasks"></em> balances
+    </a>
+    <a href="{{ url_for('comptes', spends_page='ext_remboursements') }}"
+        class="btn btn-default disabled"
+        type="button"
+        title="remboursement provenant d'une personne en-dehors de la CCC"
+    >
+        <em class="glyphicon glyphicon-transfer"></em> remboursements extérieurs
     </a>
     <a href="{{ url_for('comptes', spends_page='cadeaux') }}"
         class="btn btn-default disabled"

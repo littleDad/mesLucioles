@@ -71,7 +71,7 @@ body {
 
 .menu-list {
     position: relative;
-    margin: 10px 0 0 333px;
+    margin: 10px 75px 0 auto;
     width: 300px;
     line-height: 35px;
 }
@@ -94,9 +94,15 @@ body {
 
 
 
+/* for tables */
+.table-striped > tbody > tr:nth-of-type(2n) {
+    background-color: #d6d6d6;
+}
 
 
 
+
+/* for H5s */
 h5 {
     color: grey;
 }
@@ -137,7 +143,7 @@ ui-autocomplete-input{
 
 
 
-
+/* for the footer */
 footer.plein {
     position: fixed;
     right: 5%;
