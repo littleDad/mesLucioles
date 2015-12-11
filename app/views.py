@@ -188,15 +188,15 @@ def comptes(spends_page):
     payers = []
     times = []
     parts = {}
+    my_parts = []
     if spends_page == 'depenses':
         Spendings = Spending.query.order_by('timestamp').all()
         for spending in Spendings:
+            print 'depense: %r', spending.id
             times.append(spending.getDate(current_user))
-            payeur = User.query.filter_by(id=spending.payer_id).first().firstname
-            if payeur == "inconnu(e)":
-                payers.append(User.query.filter_by(id=spending.payer_id).first().email)
-            else:
-                payers.append(payeur)
+            payers.append(User.getName(spending.payer_id))
+            my_parts.append(Spending.getPart(spending, current_user.id))
+        #print my_parts
 
     return render_template('comptes.html',
         app_name=app_name,
@@ -205,6 +205,7 @@ def comptes(spends_page):
         times=times,
         payers=payers,
         parts=parts,
+        my_parts=my_parts,
         my_rows=g.user.spends.all()
     )
 

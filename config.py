@@ -17,7 +17,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 # db config
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'mesLucioles.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
-
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # mail server settings
 MAIL_SERVER = 'localhost'

@@ -54,9 +54,12 @@ class User(db.Model):
         """return user (self) lastConnection attribute according to user timezone"""
         return format_date(self.last_connection, locale=self.timezone)
 
-
-
-
+    @staticmethod
+    def getName(ID):
+        user = User.query.filter_by(id=ID).first().firstname
+        if user == "inconnu(e)":
+            return User.query.filter_by(id=ID).first().email
+        return user
 
     def __repr__(self):
         return '<User %r> (%r)' % (self.email, self.firstname)
@@ -81,7 +84,7 @@ class Spending(db.Model):
     label = db.Column(db.String(50))
     total = db.Column(db.Float(10))
     payer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    #parts = db.relationship('Part', backref='spending', lazy='dynamic')
+    parts = db.relationship('Part', backref='spending', lazy='dynamic')
     #comment = db.Column(db.String(140))
 
 
@@ -101,9 +104,17 @@ class Spending(db.Model):
 
         return format_date(self.timestamp, "d MMM", locale=user.timezone)
 
-    """
+    @staticmethod
+    def getPart(Spending, user_id):
+        for part in Spending.parts:
+            if part.user_id == user_id:
+                return part.total
+        return 0  # this user_id doesn't have to pay this bill
+
+
+
     class Part(db.Model): # Part.spending doit pouvoir récupérr le spending
         id = db.Column(db.Integer, primary_key = True)
+        spending_id = db.Column(db.Integer, db.ForeignKey('spending.id'))
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-        user_part = db.Column(db.Float(10))
-    """
+        total = db.Column(db.Float(10))

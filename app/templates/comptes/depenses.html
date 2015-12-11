@@ -20,7 +20,7 @@
                 {% endif %}
             </td>
                 
-            <td>Ma_part??</td>
+            <td>{{ my_parts[depense.id - 1] }} €</td>
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-pencil"></em></a></td>
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-remove"></em></a></td>
         {% if depense.type == 'repeated' %}
