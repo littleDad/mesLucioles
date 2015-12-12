@@ -1,3 +1,13 @@
+<div style="margin-bottom: 3px">
+    <a href="{{ url_for('comptes', spends_page='ajoutDepense') }}"
+        class="btn btn-default small"
+        style="font-size: 10pt"
+        type="button"
+        title="ajouter une dépense"
+    >
+        <em class="glyphicon glyphicon-plus"></em> ajouter une dépense
+    </a>
+</div>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -5,7 +15,6 @@
         </tr>
     </thead>
     <tbody>
-    afficher qui a créé la dépense !
     {% for depense in rows %}
         <tr>
             <td>{{ times[depense.id - 1] }}</td>
@@ -20,7 +29,11 @@
                 {% endif %}
             </td>
                 
-            <td>{{ my_parts[depense.id - 1] }} €</td>
+            <td>{% if my_parts[depense.id - 1] == 0 %}--
+            {% else %}
+            {{ my_parts[depense.id - 1] }} €
+            {% endif %}
+            </td>
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-pencil"></em></a></td>
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-remove"></em></a></td>
         {% if depense.type == 'repeated' %}

@@ -33,17 +33,12 @@ def addBill():
         bill.timestamp=datetime.utcnow()
         bill.type='Alimentation'
         bill.label='Carottes2'
-        bill.total=25
+        bill.total=25.23
         bill.payer_id = models.User.query.filter_by(id=1).first().id
-
-        #p = Post(body='test post', author=u, timestamp=datetime.utcnow())
-        p1 = models.Spending.Part(spending=bill, total=12, user_id=1)
-        p2 = models.Spending.Part(spending=bill, total=13, user_id=2)
+        bill_user_ids = [1, 2]
+        bill.addParts(db.session, bill_user_ids)
         db.session.add(bill)
-        db.session.add(p1)
         db.session.commit()
-        for part in bill.parts:
-            print part.user_id
 
 
 if __name__ == '__main__':
@@ -61,9 +56,4 @@ if __name__ == '__main__':
 
         addUser(email, passwd, firstname, timezone)
     if argv[1] == str(1):
-        email = 'b@t'
-        passwd = 'coucou'
-        firstname = None
-        timezone = None
-        #addUser(email, passwd, firstname, timezone)
         addBill()#spend=models.Spending.query.filter_by(id=1).first())

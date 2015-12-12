@@ -1,6 +1,7 @@
 body {
     /*    margin: 2em auto;*/
-    margin: 0 5%;
+    margin: 0 0;
+    padding: 0;
     font-family: serif;
     font-size: 10pt;
     text-align: left;
@@ -15,6 +16,13 @@ body {
     
 }
 
+#background {
+    z-index: -1;
+    position: absolute;
+    background: linear-gradient(to bottom, #ffffff, #c4c4c4);
+    height: 100%;
+    width: 100%;
+}
 
 
 
@@ -95,6 +103,9 @@ body {
 
 
 /* for tables */
+.table-striped {
+    background-color: #cfc7d1;
+}
 .table-striped > tbody > tr:nth-of-type(2n) {
     background-color: #d6d6d6;
 }
@@ -154,7 +165,7 @@ footer.plein {
     padding: 3px 7px;
     border: 1px solid #a4a9a4;
     border-radius: 15px 15px 0 0;
-    background-color: #bdbcbe;
+    background-color: #ededed;
 }
 footer.plein span {
     color: #E74C3C;

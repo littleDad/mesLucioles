@@ -11,15 +11,6 @@ ToDo:
 {% block h2 %}Livret de comptes{% endblock %}
 {% block h5 %}ou "anti-lieu de Controverses Consuméristes Contusives"{% endblock %}
 {% block submenu %}
-    {#
-    <a href="{{ url_for('comptes', spends_page='ajoutDepense') }}"
-        class="btn btn-default"
-        type="button"
-        title="ajouter une dépense"
-    >
-        <em class="glyphicon glyphicon-plus"></em> ajout dépense
-    </a>
-    #}
     <a href="{{ url_for('comptes', spends_page='depenses') }}"
         class="btn btn-default"
         type="button"
@@ -62,14 +53,14 @@ ToDo:
     >
         <em class="glyphicon glyphicon-stats"></em> statistiques <span style="font-size: 7pt">(pour Liang...)</span>
         {#
-là-dedans, ça serait bien de mettre un diagramme bâton avec MES dépenses (label et montant) sur le mois (et un autre avec mes dépenses depuis le début) !
+là-dedans, ça serait bien de mettre un diagramme bâton avec MES dépenses (label et montant) sur le mois (et un autre avec mes dépenses depuis le début du site) !
         #}
     </a>
 {% endblock %}
 
 
 {% block content %}
-<div class="row clearfix col-md-10">
+<div class="row clearfix col-md-11">
 
 {% include 'comptes/'+spends_page+'.html' %}
 

@@ -14,8 +14,9 @@ Done :
 
 
 ToDo :
-- check la police (localhost/polices.html) > doit centraliser plein de polices que je puisse choisir :) page WIKI
+- améliorer la gestion des centimes perdus dans les comptes in Spending.addParts()
 
+- check la police (localhost/polices.html) > doit centraliser plein de polices que je puisse choisir :) page WIKI
 - introduire mon module de messagerie theWall
 - introduire un module de gestion des anniversaires et cadeaux
 - introduire un module de calendrier et de gestion des évènements

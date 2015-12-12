@@ -1,10 +1,11 @@
 # -*- coding: utf8 -*-
 
+
+
 # main
 from flask import Flask
 coreApp = Flask(__name__)
 coreApp.config.from_object('config')
-
 
 # db
 #from flask.ext.sqlalchemy import SQLAlchemy

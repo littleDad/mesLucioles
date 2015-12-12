@@ -56,7 +56,7 @@ def internal_error(error):
 @login_required
 def index():
     print g.user
-    return render_template('index.html', menu_not_collapsed=True, app_name=app_name)
+    return render_template('index.html', menu_not_collapsed=False, app_name=app_name)
 
 
 @coreApp.route('/thewall')
