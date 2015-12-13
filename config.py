@@ -7,9 +7,8 @@ import os
 APP_NAME = "Hackz' your friends (beta!)"
 
 from logger_03 import LogFile
-LOGGER = LogFile('app.log')
+LOGGER = LogFile('data/app.log')
 LOGGER.initself()
-LOGGER.p_log('config file ridden')
 
 # activates the cross-site request forgery (CSRF) prevention
 WTF_CSRF_ENABLED = True 

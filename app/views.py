@@ -4,13 +4,18 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app import coreApp, db, lm
-from .forms import LoginForm, LostPasswdForm, EditUserForm, AddSpendForm
+from .forms import LoginForm, LostPasswdForm, EditUserForm, AddSpendingForm
 from .models import User, Spending
 
 from functools import wraps
-from datetime import datetime
+from babel.dates import format_date, datetime
+from sqlalchemy import desc
 
 app_name = coreApp.config['APP_NAME']
+
+@coreApp.route('/test')
+def test():
+    return render_template('test.html')
 
 ### BEGIN: DECORATORS ###
 @coreApp.before_request # any method that are decorated with before_request will run before the view method each time a request is received
@@ -181,57 +186,130 @@ def getUsers():
 
 
 ### BEGIN: COMPTES ##
-@coreApp.route('/comptes/<spends_page>')
+@coreApp.route('/comptes')
+def comptes1():
+    return redirect(url_for('comptes', spends_page='depenses'))
+@coreApp.route('/comptes/')
+def comptes2():
+    return redirect(url_for('comptes', spends_page='depenses'))
+
+
+@coreApp.route('/comptes/<spends_page>', methods=['GET', 'POST'])
 def comptes(spends_page):
-    session['spends_page'] = spends_page
-    Spendings = []
-    payers = []
-    times = []
-    parts = {}
-    my_parts = []
-    if spends_page == 'depenses':
-        Spendings = Spending.query.order_by('timestamp').all()
-        for spending in Spendings:
-            print 'depense: %r', spending.id
-            times.append(spending.getDate(current_user))
-            payers.append(User.getName(spending.payer_id))
-            my_parts.append(Spending.getPart(spending, current_user.id))
-        #print my_parts
+    """
+        Todo:
+            - only print entries for the current_user
+            - régler cette histoire de dropdown-menu (voir dans ajoutDepense.html la différence entre les catégories et le choix de payeur_id)
+                en gros l'un (catégories) est joli mais pas complet et utilise bootstrap à l'arrache, l'autre (payeur) utilise flask mais est un peu moche
+                voir la doc là : http://wtforms.simplecodes.com/docs/0.6/fields.html
+                et là : http://wtforms.simplecodes.com/docs/1.0.1/specific_problems.html
+    """
 
-    return render_template('comptes.html',
-        app_name=app_name,
-        spends_page=spends_page,
-        rows=Spendings,
-        times=times,
-        payers=payers,
-        parts=parts,
-        my_parts=my_parts,
-        my_rows=g.user.spends.all()
-    )
-
-@coreApp.route('/comptes/ajoutDepense', methods=['GET', 'POST'])
-def ajoutDepense():
-    "add a spend to the database"
-    form = AddSpendForm()
-    if form.validate_on_submit():
-        newSpend = Spending()
-        newSpend.type = form.type.data
-        newSpend.label = form.label.data
-        newSpend.total = form.total.data
-        newSpend.timestamp = form.timestamp.data
-        newSpend.payer_id = form.payer_id.data
-        newSpend.timestamp = form.timestamp.data
-        db.session.add(newSpend)
+    # delete a spending and his parts
+    if spends_page.split("_")[0] == "spendingdel":
+        Spending.query.filter_by(
+            id=int(spends_page.split("_")[1])
+        ).delete()
+        parts = Spending.Part.query.filter_by(
+            spending_id=int(spends_page.split("_")[1])
+            ).delete()
         db.session.commit()
-        flash(u'la dépense a bien été ajoutée')
-    else:
-        for errors in form.errors.values():
-            for error in errors:
-                flash(error)
-                print error
-        return render_template('comptes/ajoutDepense.html', app_name=app_name, form=form)
+        spends_page="depenses"
 
-    return url_for('comptes', spends_page=session['spends_page'])
+    session['spends_page'] = spends_page
+
+    # list all spendings from the database
+    if spends_page == 'depenses':
+        #print 'DEL', request.form['del_spending']
+        payers = {}
+        times = {}
+        my_parts = {}
+        spendings = Spending.query.order_by(desc('timestamp')).all()
+
+        for spending in spendings:
+            times[spending.id] = spending.getDate(current_user)
+            payers[spending.id] = User.getName(spending.payer_id)
+            my_parts[spending.id] = Spending.getPart(spending, current_user.id)
+        return render_template('comptes.html',
+            app_name=app_name,
+            spends_page=spends_page,
+            rows=spendings,
+            times=times,
+            payers=payers,
+            my_parts=my_parts,
+            my_rows=g.user.spends.all()
+        )
+
+    # add a spending to the database
+    if spends_page == 'ajoutDepense':
+        form = AddSpendingForm()
+        users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
+        form.payer_id.choices = users
+        form.bill_user_ids.choices = users
+        if form.validate_on_submit():
+            newSpend = Spending(
+                timestamp=form.date.data,
+                type=form.type.data,
+                label=form.label.data,
+                total=form.total.data,
+                payer_id=form.payer_id.data
+            )
+            newSpend.addParts(
+                db.session,
+                form.bill_user_ids.data
+            )
+            db.session.add(newSpend)
+            db.session.commit()
+            flash(u'la dépense a bien été ajoutée')
+            return redirect(url_for('comptes', spends_page='depenses'))
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+                    print error
+
+            # query on spending.types
+            types = []
+            for type in Spending.Type.query.all():
+                types.append(type.name)
+
+            # query on spending.users
+            """
+            users = User.query.all()
+            c_users = []
+            for user in users:
+                c_users.append((user.id, str(User.getName(user.id))))
+            """
+
+            return render_template(
+                'comptes.html',
+                app_name=app_name,
+                spends_page=spends_page,
+                form=form,
+                types=types,
+                #users=c_users
+            )
+
+    if spends_page == 'remboursements':
+        return render_template(
+            'comptes.html',
+            app_name=app_name,
+            spends_page=spends_page,
+        )
+
+    if spends_page == 'balances':
+        return render_template(
+            'comptes.html',
+            app_name=app_name,
+            spends_page=spends_page,
+        )
+
+    # else
+    return redirect(url_for(
+        'comptes',
+        app_name=app_name,
+        spends_page='depenses'
+    ))
 
 
 ### END: COMPTES ###

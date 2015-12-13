@@ -1,4 +1,8 @@
 {% extends "layout.html" %}
+{% block script %}
+        <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
+        <link href="/static/css/datepicker.css" rel="stylesheet">
+{% endblock %}
 
 {# 
 ToDo:
@@ -51,18 +55,17 @@ ToDo:
         type="button"
         title="un peu de suivi peut ne pas faire de mal"
     >
-        <em class="glyphicon glyphicon-stats"></em> statistiques <span style="font-size: 7pt">(pour Liang...)</span>
+        <em class="glyphicon glyphicon-stats"></em> statistiques <span style="font-size: 7pt"><!--(pour Liang...)--></span>
         {#
 là-dedans, ça serait bien de mettre un diagramme bâton avec MES dépenses (label et montant) sur le mois (et un autre avec mes dépenses depuis le début du site) !
         #}
     </a>
 {% endblock %}
 
-
 {% block content %}
 <div class="row clearfix col-md-11">
-
 {% include 'comptes/'+spends_page+'.html' %}
+{% include 'errors.html' %}
 
 </div>
 {% endblock %}

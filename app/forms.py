@@ -1,10 +1,11 @@
 # -*- coding: utf8 -*-
 
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, FloatField, TextField, PasswordField
-from wtforms.validators import DataRequired
+from wtforms import widgets, StringField, BooleanField, FloatField, TextField, PasswordField, DateField, SelectMultipleField, SelectField, FormField, SubmitField, HiddenField, FieldList, IntegerField
+from wtforms.validators import DataRequired, required, optional
 
 from app.models import User
+from babel.dates import datetime
 
 
 class LoginForm(Form):
@@ -40,10 +41,41 @@ class EditUserForm(Form):
                 return True
             
 
-class AddSpendForm(Form):
-    type = StringField('Type', validators=[DataRequired()])
-    label = StringField('Titre', validators=[DataRequired()])
-    total = FloatField('Montant', validators=[DataRequired()])
-    timestamp = StringField('Date', validators=[DataRequired()])
-    payer_id = StringField('Payeur', validators=[DataRequired()])
-    #autres
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+class AddSpendingForm(Form):
+    label = StringField(u'Titre', validators=[DataRequired(u"t'as oublié le titre !")])
+    total = StringField(u'Montant', validators=[DataRequired(u"le montant est absent, ou n'est pas correct.")])
+    date = DateField(
+        u'Date',
+        [required(u"la date ?")],
+        format="%d/%m/%Y",
+        default=datetime.today
+    )
+    type = HiddenField(u'Catégorie', validators=[DataRequired(u"la catégorie ?")])
+    #payer_id = HiddenField(u'Qui a payé ?', validators=[DataRequired(u"qui a payé pour cette dépense ? toi ?")])
+    payer_id = SelectField(u'Qui a payé ?', coerce=int)
+    bill_user_ids = MultiCheckboxField(u'Pour qui ?')
+    submit = SubmitField(u"Ajouter la dépense")
+    
+    
+    def validate(self):
+        if (self.bill_user_ids.data != []):
+            for idx, data in enumerate(self.bill_user_ids.data):
+                self.bill_user_ids.data[idx] = int(data)
+        if not Form.validate(self):
+            return False
+        else:
+            if (self.bill_user_ids.data == []):
+                self.bill_user_ids.errors.append(u"à qui profite cette dépense ?")
+                return False
+            total = (self.total.data).replace(" ","").replace(",",".")
+            total = float(total)
+            if len(str(total - int(total))) > 4:  # how many centimes?
+                self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
+                return False
+            return True
+

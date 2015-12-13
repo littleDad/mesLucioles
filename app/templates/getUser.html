@@ -17,7 +17,7 @@
         
         <div class="form-group">prénom :
             {% if user.id == g.user.id %}
-                {{ form.firstname(size=24, maxlength=64) }}
+                {{ form.firstname(size=24, maxlength=24) }}
             {% else %}
                 {{ user.firstname }}
             {% endif %}
@@ -38,7 +38,7 @@
 
         <div class="form-group">timezone (fuseau horaire) :
             {% if user.id == g.user.id %}
-                {{ form.timezone(size=5, maxlength=5, readonly=true) }} {# not well implemented for the moment #}
+                {{ form.timezone(size=5, maxlength=5, readonly=true) }} {# not implemented for the moment #}
             {% else %}
                 {{ user.timezone }}
             {% endif %}
@@ -50,4 +50,7 @@
         </form>
     </div>
 </div>
+
+{% include 'errors.html' %}
+
 {% endblock %}

@@ -70,12 +70,12 @@
                         {% if g.user.email %}
                             <ul>
                                 <a href="{{ url_for('thewall') }}"><li>Mur principal</li></a>
+                                <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><li>Comptes</li></a>
+                                <a href="{{ url_for('getUser', email=g.user.email) }}"><li>Mon profil</li></a>
+                                <a href="{{ url_for('getUsers') }}"><li>Tous les profils</li></a>
                                 {#
                                 <a href="{{ url_for('calendrier') }}"><li>Calendrier</li></a>
                                 #}
-                                <a href="{{ url_for('getUser', email=g.user.email) }}"><li>Mon profil</li></a>
-                                <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><li>Comptes</li></a>
-                                <a href="{{ url_for('getUsers') }}"><li>Tous les profils</li></a>
                             </ul>
                         {% endif %}
                         </div>

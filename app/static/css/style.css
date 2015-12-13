@@ -7,30 +7,45 @@ body {
     text-align: left;
 }
 .main {
-    margin-bottom: 60px;
+    margin: 0 0 10% 0;
 }
-
-.navbar-fixed-top {
-    padding-top: 5px;
-    padding-left: 10px;
-    
-}
-
 #background {
     z-index: -1;
-    position: absolute;
+    position: fixed;
     background: linear-gradient(to bottom, #ffffff, #c4c4c4);
-    height: 100%;
     width: 100%;
+    height: 100%;
 }
+
+
+
+/* for the top-left login corner */
+.navbar-fixed-top {
+    padding: 5px 0px 0 5px;
+    border: 1px solid #A4A9A4;
+    border-radius: 0px 0px 15px;
+    background-color: #ededed;  
+    min-height: 33px;
+    width: 105px;
+}
+a {
+    color: inherit;
+    text-decoration: underline;
+}
+.btn {
+    text-decoration: inherit;
+}
+
 
 
 
 /* FOR THE MENU */
+.menu-group {
+    margin-bottom: 40px;
+}
 .menu {
     background-color: lightgrey;
     margin-top: 3%;
-    margin-left: 1.5%;
     padding: 1px 0 10px 0;
     border-radius: 15px;
 
@@ -101,7 +116,6 @@ body {
 
 
 
-
 /* for tables */
 .table-striped {
     background-color: #cfc7d1;
@@ -112,14 +126,14 @@ body {
 
 
 
-
-/* for H5s */
+/* for the content */
 h5 {
     color: grey;
 }
 .content{
     background-color: #98F3AA;
-    padding: 3%;
+    margin-left: 3%;
+    padding: 0 0 50px 3%;
     border-radius: 15px 30px 15px 30px;
 }
 .col-md-5 {
@@ -127,6 +141,57 @@ h5 {
 }
 
 
+
+/* for the forms */
+.col-md-4 .form-group{
+    margin-bottom: 30px;
+}
+.col-md-4 .form-group a {
+    text-decoration: inherit;
+}
+.col-md-4 .form-group a:hover {
+    background-color: #98F3AA;
+}
+
+
+
+/* for the footer */
+footer.plein {
+    position: fixed;
+    right: 5%;
+    z-index: -1;
+    text-align: center;
+    bottom: 0;
+    width: auto;
+    padding: 3px 7px;
+    border: 1px solid #a4a9a4;
+    border-radius: 15px 15px 0 0;
+    background-color: #ededed;
+}
+footer.plein span {
+    color: #E74C3C;
+    font-style: normal;
+}
+
+
+/* for errors */
+.m_errors {
+    margin-top: 20px;
+    .opacity: .7;
+}
+.m_errors ul {
+    list-style-type: none;
+}
+.m_errors li {
+    color: #d31f1f;
+    text-align: center;
+    padding: 3px;
+    margin: 15px 0;
+    border: 1px solid #a4a9a4;
+    background-color: #dadada;
+}
+
+/* for UNKNOWN */
 .glyphicon-triangle-right {
     font-size: .6em;
 }
@@ -147,27 +212,4 @@ a.ui-state-focus {
 ui-autocomplete-input{
     border-radius: 15px 70px 15px 70px;
     background-color: red;
-}
-
-
-
-
-
-
-/* for the footer */
-footer.plein {
-    position: fixed;
-    right: 5%;
-    z-index: -1;
-    text-align: center;
-    bottom: 0;
-    width: auto;
-    padding: 3px 7px;
-    border: 1px solid #a4a9a4;
-    border-radius: 15px 15px 0 0;
-    background-color: #ededed;
-}
-footer.plein span {
-    color: #E74C3C;
-    font-style: normal;
 }

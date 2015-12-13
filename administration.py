@@ -2,11 +2,10 @@
 # -*- coding: utf8 -*-
 """
 this admin script allows you to :
+  - la base minimale du programme : ./administration 1
+  - base de test : ./administration 2
   - add an user to the db : ./administration 0 email password (firstname timezone)
-  - 
 
-insert into user values (1,'bat@baptabl.fr','coucou','b@t','2015-11-24 14:58:36.667460','fr_FR');
-insert into spending values (1, '2015-12-12 13:48:55.762390', 'Alimentation', 'Carottes', 20, 1);
 """
 
 from sys import argv
@@ -34,8 +33,8 @@ def addBill():
         bill.type='Alimentation'
         bill.label='Carottes2'
         bill.total=25.23
-        bill.payer_id = models.User.query.filter_by(id=1).first().id
-        bill_user_ids = [1, 2]
+        bill.payer_id = 1#models.User.query.filter_by(id=1).first().id
+        bill_user_ids = [1]
         bill.addParts(db.session, bill_user_ids)
         db.session.add(bill)
         db.session.commit()
@@ -56,4 +55,21 @@ if __name__ == '__main__':
 
         addUser(email, passwd, firstname, timezone)
     if argv[1] == str(1):
+        t1 = models.Spending.Type(name=u"Alimentation")
+        db.session.add(t1)
+        t2 = models.Spending.Type(name=u"Alcool")
+        db.session.add(t2)
+        t3 = models.Spending.Type(name=u"Divers")
+        db.session.add(t3)
+        t4 = models.Spending.Type(name=u"Charges")
+        db.session.add(t4)
+        t5 = models.Spending.Type(name=u"Bien-être")
+        db.session.add(t5)
+        db.session.commit()
+
+    if argv[1] == str(2):
+        db.session.add(models.User(email='b@t', password='coucou', firstname='Batoo'))
+        db.session.add(models.User(email='b@2t', password='coucou'))
         addBill()#spend=models.Spending.query.filter_by(id=1).first())
+        
+        db.session.commit()

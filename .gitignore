@@ -1,6 +1,6 @@
 secrets.py
 *.pyc
-*.log
+*.log*
 data/
 env/
 mesLucioles.db

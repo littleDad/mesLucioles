@@ -1,0 +1,11 @@
+{% with messages = get_flashed_messages()|reverse %}
+  {% if messages %}
+    <div class="flash col-md-6 m_errors">
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+</div>

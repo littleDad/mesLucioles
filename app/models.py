@@ -164,9 +164,13 @@ class Spending(db.Model):
                 return part.total
         return 0  # this user_id doesn't have to pay this bill
 
-
     class Part(db.Model): # Part.spending doit pouvoir récupérr le spending
         id = db.Column(db.Integer, primary_key = True)
         spending_id = db.Column(db.Integer, db.ForeignKey('spending.id'))
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
         total = db.Column(db.Float(10))
+
+    class Type(db.Model):
+        name = db.Column(db.String(30), primary_key = True)
+
+        
