@@ -1,3 +1,4 @@
+#!env/bin/python
 # -*- coding: utf8 -*-
 
 from app import coreApp

@@ -40,6 +40,18 @@ class EditUserForm(Form):
             else:
                 return True
             
+class AddUserForm(Form):
+    """
+        ToDo:
+        les validateurs de ce formulaire ne sont pas implémentés !
+            > par exemple check que l'user (mail) n'existe pas déjà...
+            > et pis le mot de passe là en clair ça craint à mort !
+    """
+    email = StringField(u'Email', [required('il nous faut entrer ton email !')])
+    password = PasswordField(u'Mot de passe :', [required('il nous faut un mot de passe !')])
+    firstname = StringField(u'Nom', [optional()])
+    timezone = StringField(u'Timezone', [optional()], default='fr_FR')
+    submit = SubmitField(u"Ajouter l'utilisateur")
 
 
 
@@ -55,7 +67,7 @@ class AddSpendingForm(Form):
         format="%d/%m/%Y",
         default=datetime.today
     )
-    type = HiddenField(u'Catégorie', validators=[DataRequired(u"la catégorie ?")])
+    s_type = HiddenField(u'Catégorie', validators=[DataRequired(u"la catégorie ?")])
     #payer_id = HiddenField(u'Qui a payé ?', validators=[DataRequired(u"qui a payé pour cette dépense ? toi ?")])
     payer_id = SelectField(u'Qui a payé ?', coerce=int)
     bill_user_ids = MultiCheckboxField(u'Pour qui ?')

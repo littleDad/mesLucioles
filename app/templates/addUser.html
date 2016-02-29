@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block h2 %}
+Ajouter un utilisateur
+{% endblock %}
+{% block content %}
+<div class="row clearfix col-md-5">
+    <div>
+        <form action="{{ url_for('addUser') }}" method="post">
+            {{ form.hidden_tag() }}
+            
+            {% for field in form %}
+                <div class="form-group">
+                {% if (field.name != 'submit') and (field.name != 'csrf_token') %}
+                    {{ field.label }}
+                {% endif %}
+                {# le if ci-dessous est immonde ! chezchez comment modifiez les classes dans views.py #}
+                {% if field.name == 'timezone' %}
+                    {{ field(readonly=true) }}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                </div>
+            {% endfor %}
+
+        </form>
+    </div>
+</div>
+
+{% include 'errors.html' %}
+
+{% endblock %}

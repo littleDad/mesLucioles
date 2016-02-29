@@ -8,11 +8,13 @@ this admin script allows you to :
 
 """
 
-from sys import argv
+from sys import argv, exc_info
 from app import models
-from app.models import User
+from app.models import User, Spending
 from flask import Flask
 from babel.dates import datetime
+from time import sleep
+
 coreApp = Flask(__name__)
 coreApp.config.from_object('config')
 
@@ -27,16 +29,60 @@ def addUser(*args):
     db.session.add(user)
     db.session.commit()
 
-def addBill():
-        bill = models.Spending()
-        bill.timestamp=datetime.utcnow()
-        bill.type='Alimentation'
-        bill.label='Carottes2'
-        bill.total=25.23
-        bill.payer_id = 1#models.User.query.filter_by(id=1).first().id
-        bill_user_ids = [1]
-        bill.addParts(db.session, bill_user_ids)
+def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
+    """
+        create a Spending in the database.
+          1) create the Spending model and fill its attributes except parts
+          2) estimate parts and add them to our Spending
+          3) adjust balance for each User with this parts
+          4) until no errors: add all of this in the database
+    """
+    try:
+        bill = Spending()
+        bill.timestamp = datetime.utcnow()
+        bill.s_type = s_type
+        bill.label = label
+        bill.total = total
+        bill.payer_id = payer_id
         db.session.add(bill)
+
+        db.session.query(User).get(payer_id).given_money += 12
+     
+        
+        tmp_parts = bill.computeParts(db.session, len(s_user_ids))
+        user_parts = []
+        for idx, i in enumerate(tmp_parts):
+            db.session.add(
+                Spending.Part(
+                    spending=bill,
+                    total=i, # == tmp_parts[idx],
+                    user_id=s_user_ids[idx]
+                )
+            )
+            user_parts.append([s_user_ids[idx], i])
+        
+
+        for user_id, user_bill in user_parts:
+            db.session.query(User).get(user_id).borrowed_money += user_bill
+
+        db.session.commit()
+    except:
+        db.session.rollback()
+        print exc_info()
+        
+
+
+def addTypes():
+        t1 = models.Spending.Type(name=u"Alimentation")
+        db.session.add(t1)
+        t2 = models.Spending.Type(name=u"Alcool")
+        db.session.add(t2)
+        t3 = models.Spending.Type(name=u"Divers")
+        db.session.add(t3)
+        t4 = models.Spending.Type(name=u"Charges")
+        db.session.add(t4)
+        t5 = models.Spending.Type(name=u"Bien-être")
+        db.session.add(t5)
         db.session.commit()
 
 
@@ -54,22 +100,23 @@ if __name__ == '__main__':
             timezone = None
 
         addUser(email, passwd, firstname, timezone)
-    if argv[1] == str(1):
-        t1 = models.Spending.Type(name=u"Alimentation")
-        db.session.add(t1)
-        t2 = models.Spending.Type(name=u"Alcool")
-        db.session.add(t2)
-        t3 = models.Spending.Type(name=u"Divers")
-        db.session.add(t3)
-        t4 = models.Spending.Type(name=u"Charges")
-        db.session.add(t4)
-        t5 = models.Spending.Type(name=u"Bien-être")
-        db.session.add(t5)
-        db.session.commit()
-
-    if argv[1] == str(2):
+    if (argv[1] == str(1)) or (argv[1] == "init"):
+        addTypes()
         db.session.add(models.User(email='b@t', password='coucou', firstname='Batoo'))
         db.session.add(models.User(email='b@2t', password='coucou'))
-        addBill()#spend=models.Spending.query.filter_by(id=1).first())
-        
+        db.session.add(models.User(email='b@t3', password='coucou'))
         db.session.commit()
+    if argv[1] == str(2):
+        s_type = 'Alimentation'
+        label = 'Carottes'
+        total = 23.23
+        payer_id = 1
+        user_ids = [1, 2]
+        addBill(s_type, label, total, payer_id, user_ids) #spend=models.Spending.query.filter_by(id=1).first())
+        
+        print 'données de test initiales ajoutées: OK.'
+    if argv[1] == str(3):
+        # print Spending.getPart(spending, current_user.id)
+        t = db.session.query(Spending).first()
+        for part in t.parts:
+            print part.total

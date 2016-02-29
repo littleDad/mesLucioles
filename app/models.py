@@ -13,7 +13,9 @@ class User(db.Model):
     firstname = db.Column(db.String(64), index=True, default='inconnu(e)')
     last_connection = db.Column(db.DateTime)
     timezone = db.Column(db.String(5), default='fr_FR')
-    spends = db.relationship('Spending', backref='payer', lazy='dynamic') # so we can use Spending.payeur to get the User instance that created a Spending
+    given_money = db.Column(db.Float(10), default=0)
+    borrowed_money = db.Column(db.Float(10), default=0)
+    spends = db.relationship('Spending', backref='payer', lazy='dynamic') # so we can use Spending.payer to get the User instance that created a Spending
 
     @staticmethod
     def useless_method():
@@ -56,15 +58,22 @@ class User(db.Model):
         """return user (self) lastConnection attribute according to user timezone"""
         return format_date(self.last_connection, locale=self.timezone)
 
+    def __repr__(self):
+        return '<User %r> (%r)' % (self.email, self.firstname)
+
+    def get_balance(self):
+        return self.balance
+
+    def edit_money(self, m_type, order, amount):
+        exec('self.'+str(m_type)+str(order)+'= '+str(amount))
+        exec('print self.'+str(m_type))
+
     @staticmethod
     def getName(ID):
         user = User.query.filter_by(id=ID).first().firstname
         if user == "inconnu(e)":
             return User.query.filter_by(id=ID).first().email
         return user
-
-    def __repr__(self):
-        return '<User %r> (%r)' % (self.email, self.firstname)
 
 
 
@@ -82,7 +91,7 @@ class WallMessage(db.Model):
 class Spending(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     timestamp = db.Column(db.DateTime) # attention, à l'utilisation : enregistrer le temps UTC, parce qu'on a potentiellement des users du monde entier !
-    type = db.Column(db.String(30)) # maybe an enumerate type in the future?
+    s_type = db.Column(db.String(30)) # maybe an enumerate type in the future?
     label = db.Column(db.String(50))
     total = db.Column(db.Float(10))
     payer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -90,16 +99,11 @@ class Spending(db.Model):
     #comment = db.Column(db.String(140))
 
 
-    #immplémenter le formulaire ! relation 1..* en sqlalchemy ?
+    #implémenter le formulaire ! relation 1..* en sqlalchemy ?
     """
     def __repr__(self):
         return '<Dépense %r (n°%r) payer:%r>' % (self.label, self.id, self.payer_id)
     """
-    def compute_parts(self, Users):
-        """Users passé est une liste de user_id
-        """
-        # parts est un dico (User_id, part_réel)
-        return parts
 
     def getDate(self, user):
         """return spending (self) bought date attribute according to user timezone"""
@@ -107,7 +111,10 @@ class Spending(db.Model):
         return format_date(self.timestamp, "d MMM", locale=user.timezone)
 
 
-    def addParts(self, c_session, bill_user_ids):
+    def computeParts(self, c_session, len_user_ids):
+        """divide a spending into money parts for users.
+            return a list of (user, to_pay) couples
+        """
         def makeParts(value, p_size, spending_name, spending_time):
             """make p_size parts with the value.
             if centimes left, we allocate these lost ones to a random user. sometimes
@@ -115,7 +122,7 @@ class Spending(db.Model):
             my priority was to NOT have lost centimes.
 
             P.S.: sorry for this madness with floating and decimal numbers, there wasn't
-                any 'easy' way anyway I think!
+                any 'easy' way!
             """
             getcontext().prec = 6
             value = dec(str(value))  # I'll probably go to hell for this...
@@ -146,15 +153,8 @@ class Spending(db.Model):
                 LOGGER.p_log('parts: ' + str(parts), blank=True)
             return parts
 
-        parts = makeParts(self.total, len(bill_user_ids), self.label, self.timestamp)
-        for idx, i in enumerate(bill_user_ids):
-            c_session.add(
-                Spending.Part(
-                    spending=self,
-                    total=parts[idx],
-                    user_id=bill_user_ids[idx]
-                )
-            )
+        parts = makeParts(self.total, len_user_ids, self.label, self.timestamp)
+        return parts
 
 
     @staticmethod

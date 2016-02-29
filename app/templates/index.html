@@ -8,10 +8,8 @@
     <p>Salut
     {% if g.user.firstname %}
     {{ g.user.firstname }} !<br>
-    &#8594; <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}">accéder aux comptes</a>
     {% else %}toi ! :-){% endif %}</p>
+    &#8594; <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}">accéder aux comptes</a>
 
 </div>
-
-
 {% endblock %}

@@ -1,7 +1,6 @@
 # -*- coding: utf8 -*-
 
 
-
 # main
 from flask import Flask
 coreApp = Flask(__name__)

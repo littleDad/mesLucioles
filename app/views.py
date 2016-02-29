@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app import coreApp, db, lm
-from .forms import LoginForm, LostPasswdForm, EditUserForm, AddSpendingForm
+from .forms import LoginForm, LostPasswdForm, EditUserForm, AddUserForm, AddSpendingForm
 from .models import User, Spending
 
 from functools import wraps
@@ -21,7 +21,9 @@ def test():
 @coreApp.before_request # any method that are decorated with before_request will run before the view method each time a request is received
 def before_request():
     g.user = current_user # GLOBAL var to simplify access, notably in templates (global current_user is set by Flask)
-    if not g.user.is_anonymous():
+    if g.user.is_authenticated:
+        print 'user identifié'
+        print g.user
         g.user.last_connection = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
@@ -35,7 +37,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         "login_required Flask's method overriding to remove non-french (english) flashes"
-        if g.user.is_anonymous():
+        if not g.user.is_authenticated:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
 
@@ -45,7 +47,7 @@ def login_required(f):
 #fonction inutilisée et jamais appelée ! pourquoi ? :o
 @coreApp.errorhandler(404)
 def not_found_error(error):
-    return "pas de ça chez nous ! (erreur 404) <a href='/index'>retour à l'accueil</a>"
+    return render_template('404.html', app_name=app_name), 404
 
 @coreApp.errorhandler(500)
 def internal_error(error):
@@ -74,7 +76,8 @@ def thewall():
 ### BEGIN: USER ACCESS ###
 @coreApp.route('/login', methods=['GET', 'POST'])
 def login():
-    if g.user is not None and not g.user.is_anonymous():
+    # if g.user is not None and not g.user.is_anonymous():
+    if g.user.is_authenticated:
         return redirect(url_for('index'))
     else:
         form = LoginForm()
@@ -180,6 +183,46 @@ def getUsers():
     users = User.query.order_by('last_connection desc').all()
     return render_template('getUsers.html', app_name=app_name, users=users)
 
+@coreApp.route('/addUser', methods=['GET', 'POST'])
+@login_required
+def addUser():
+    """cette méthode devrait ptet etre une méthode static de la classe User mmh ?
+    """
+    #print current_user.balance.user_id
+    form = AddUserForm()
+    if form.validate_on_submit():
+        user = User(
+            email=form.email.data,
+            password=form.password.data,
+            firstname=form.firstname.data,
+            timezone=form.timezone.data
+        )
+        db.session.add(user)
+        db.session.commit()
+        print user.id
+        u_balance = Balance(user_id=user.id)
+        db.session.add(u_balance)
+        db.session.commit()
+        print ''
+        print ''
+        print ''
+        print u_balance.id
+        user.balance = u_balance.id
+        db.session.commit()
+        flash(u'utilisateur enregistré !')
+    else:
+        for errors in form.errors.values():
+            for error in errors:
+                flash(error)
+    return render_template('addUser.html',
+        app_name=app_name,
+        form=form
+    )
+
+
+
+
+
 ### END: USER ACCESS ###
 
 
@@ -187,14 +230,14 @@ def getUsers():
 
 ### BEGIN: COMPTES ##
 @coreApp.route('/comptes')
-def comptes1():
+def comptesBis():
     return redirect(url_for('comptes', spends_page='depenses'))
 @coreApp.route('/comptes/')
-def comptes2():
+def comptes2Bis():
     return redirect(url_for('comptes', spends_page='depenses'))
 
-
 @coreApp.route('/comptes/<spends_page>', methods=['GET', 'POST'])
+@login_required
 def comptes(spends_page):
     """
         Todo:
@@ -207,7 +250,10 @@ def comptes(spends_page):
 
     # delete a spending and his parts
     if spends_page.split("_")[0] == "spendingdel":
-        Spending.query.filter_by(
+        # Spending.query.filter_by(
+        #     id=int(spends_page.split("_")[1])
+        # ).delete()
+        db.session.query(Spending).get(
             id=int(spends_page.split("_")[1])
         ).delete()
         parts = Spending.Part.query.filter_by(
@@ -217,6 +263,57 @@ def comptes(spends_page):
         spends_page="depenses"
 
     session['spends_page'] = spends_page
+
+
+    # add a spending to the database
+    if spends_page == 'ajoutDepense':
+        form = AddSpendingForm()
+        users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
+        form.payer_id.choices = users
+        form.bill_user_ids.choices = users
+        if form.validate_on_submit():
+            newSpend = Spending(
+                timestamp=form.date.data,
+                s_type=form.s_type.data,
+                label=form.label.data,
+                total=form.total.data,
+                payer_id=form.payer_id.data
+            )
+            newSpend.addParts(
+                db.session,
+                form.bill_user_ids.data
+            )
+            db.session.add(newSpend)
+            db.session.commit()
+            flash(u'la dépense a bien été ajoutée')
+            return redirect(url_for('comptes', spends_page='depenses'))
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+                    print error
+
+            # query on spending.types
+            types = []
+            for s_type in Spending.Type.query.all():
+                types.append(s_type.name)
+
+            # query on spending.users
+            """
+            users = User.query.all()
+            c_users = []
+            for user in users:
+                c_users.append((user.id, str(User.getName(user.id))))
+            """
+
+            return render_template(
+                'comptes.html',
+                app_name=app_name,
+                spends_page=spends_page,
+                form=form,
+                types=types,
+                #users=c_users
+            )
 
     # list all spendings from the database
     if spends_page == 'depenses':
@@ -240,56 +337,7 @@ def comptes(spends_page):
             my_rows=g.user.spends.all()
         )
 
-    # add a spending to the database
-    if spends_page == 'ajoutDepense':
-        form = AddSpendingForm()
-        users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
-        form.payer_id.choices = users
-        form.bill_user_ids.choices = users
-        if form.validate_on_submit():
-            newSpend = Spending(
-                timestamp=form.date.data,
-                type=form.type.data,
-                label=form.label.data,
-                total=form.total.data,
-                payer_id=form.payer_id.data
-            )
-            newSpend.addParts(
-                db.session,
-                form.bill_user_ids.data
-            )
-            db.session.add(newSpend)
-            db.session.commit()
-            flash(u'la dépense a bien été ajoutée')
-            return redirect(url_for('comptes', spends_page='depenses'))
-        else:
-            for errors in form.errors.values():
-                for error in errors:
-                    flash(error)
-                    print error
-
-            # query on spending.types
-            types = []
-            for type in Spending.Type.query.all():
-                types.append(type.name)
-
-            # query on spending.users
-            """
-            users = User.query.all()
-            c_users = []
-            for user in users:
-                c_users.append((user.id, str(User.getName(user.id))))
-            """
-
-            return render_template(
-                'comptes.html',
-                app_name=app_name,
-                spends_page=spends_page,
-                form=form,
-                types=types,
-                #users=c_users
-            )
-
+    # list all repayments
     if spends_page == 'remboursements':
         return render_template(
             'comptes.html',
@@ -297,11 +345,14 @@ def comptes(spends_page):
             spends_page=spends_page,
         )
 
+    # list users' balances
     if spends_page == 'balances':
+        users = User.query.order_by('user_id').all()
         return render_template(
             'comptes.html',
             app_name=app_name,
             spends_page=spends_page,
+            users=users
         )
 
     # else
@@ -318,6 +369,7 @@ def comptes(spends_page):
 
 ### BEGIN: CALENDRIER ###
 @coreApp.route('/calendrier')
+@login_required
 def calendrier():
     return 'calendrier'
 
