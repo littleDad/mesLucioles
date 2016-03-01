@@ -142,7 +142,7 @@ class Spending(db.Model):
                 parts[the_one] += the_last_centime
 
             # any error is logged. because money is money. no jokes!
-            if str(value) != str(sum(parts)):
+            if float(value) != float(sum(parts)):
                 LOGGER.p_log('error in adding a spending', level='warning')
                 LOGGER.p_log('spending_time: ' + str(spending_time), blank=True)
                 LOGGER.p_log('value: ' + str(value), blank=True)

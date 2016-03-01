@@ -19,12 +19,12 @@
                     <b>
                         <a href="{{ url_for('getUser', email=g.user.email) }}">
                             <em class="glyphicon glyphicon-user"></em>
+                        </a>
                             {% if g.user.firstname %}{{ g.user.firstname }}
                             {% else %}{{ g.user.email }}
                             {% endif %}
-                        </a>
+                    <a href="{{ url_for('logout') }}" class="glyphicon glyphicon-log-out"></a>
                     </b>
-                    (<a href="{{ url_for('logout') }}" class="glyphicon glyphicon-off"></a>)
             </div>
         {% endif %}
 

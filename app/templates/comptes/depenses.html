@@ -34,9 +34,8 @@
             {{ (my_parts[depense.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
             {% endif %}
             </td>
-            {# ToDo
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-pencil"></em></a></td>
-            #}
+           
             <td><a href="{{ url_for('comptes', spends_page='spendingdel_'+depense.id|string) }}"><em class="glyphicon glyphicon-remove"></em></a></td>
         {% if depense.type == 'repeated' %}
             <td><a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><em class="glyphicon glyphicon-hourglass"></em></a></td>
