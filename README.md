@@ -5,17 +5,35 @@ joyeusetés avec ses amis :-)
 Ce module est codé en python avec le framework Flask.
 
 
+###############################################################################
+QUICKSTART :
+  * générer la base : ./db_create.py
+  * l'initialiser avec un jeu de test : ./administration init
+  * lancer l'appli : ./run.py
+  * se connecter sur localhost:5000 avec les id b@t/coucou
+
+###############################################################################
+
+
+
+
 Done :
 - le module d'authentification
 - la base de données en sqlite
 - le module de gestion des comptes (money!)
+- addBill(gérer l'initialisation des balances)
 
 
 ToDo :
-- addBill(gérer l'initialisation des balances)
-- editBill
+- editBill and delBill
+- gérer les exceptions (vérification de l'ajout de dépenses négatives, des centimes en trop, etc.)
 
+
+
+- encrypter et améliorer la gestion des mots de passe
+- champ de recherche pour les factures
 - centraliser (encapsuler dans une méthode de User) l'ajout et la suppression de dépense actuellement contrôlés à l'arrache dans models.Spending (c'est vraiment très sale, sorte de trigger manuel sur une classe étrangère ("Users" et son attribut "depense")...) 
+- rembourrer les logs, c'est toujours pratique le jour où on en a besoin... !
 
 - formulaire de modification de dépense (avec précision de qui a ajouté la dépense à l'origine + gérer minutieusement le rétablissement des balances des users)
 - page "effectuer un remboursement"

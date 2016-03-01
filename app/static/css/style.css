@@ -32,6 +32,9 @@ a {
     color: inherit;
     text-decoration: underline;
 }
+.navbar-fixed-top b a {
+    text-decoration: none;
+}
 .btn {
     text-decoration: inherit;
 }

@@ -10,7 +10,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password = db.Column(db.String(64))
-    firstname = db.Column(db.String(64), index=True, default='inconnu(e)')
+    firstname = db.Column(db.String(64), index=True, default=u'inconnu(e)')
     last_connection = db.Column(db.DateTime)
     timezone = db.Column(db.String(5), default='fr_FR')
     given_money = db.Column(db.Float(10), default=0)
@@ -99,16 +99,14 @@ class Spending(db.Model):
     #comment = db.Column(db.String(140))
 
 
-    #implémenter le formulaire ! relation 1..* en sqlalchemy ?
-    """
     def __repr__(self):
         return '<Dépense %r (n°%r) payer:%r>' % (self.label, self.id, self.payer_id)
-    """
 
     def getDate(self, user):
         """return spending (self) bought date attribute according to user timezone"""
 
         return format_date(self.timestamp, "d MMM", locale=user.timezone)
+
 
 
     def computeParts(self, c_session, len_user_ids):
@@ -146,7 +144,6 @@ class Spending(db.Model):
             # any error is logged. because money is money. no jokes!
             if str(value) != str(sum(parts)):
                 LOGGER.p_log('error in adding a spending', level='warning')
-                LOGGER.p_log('spending_name: ' + str(spending_name), blank=True)
                 LOGGER.p_log('spending_time: ' + str(spending_time), blank=True)
                 LOGGER.p_log('value: ' + str(value), blank=True)
                 LOGGER.p_log('sum: ' + str(sum(parts)), blank=True)
@@ -173,4 +170,3 @@ class Spending(db.Model):
     class Type(db.Model):
         name = db.Column(db.String(30), primary_key = True)
 
-        

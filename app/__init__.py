@@ -9,7 +9,7 @@ coreApp.config.from_object('config')
 # db
 #from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
-db = SQLAlchemy(coreApp) ### à terme, cccDb ?
+db = SQLAlchemy(coreApp)
 
 
 # sessions, users and logins
@@ -38,13 +38,15 @@ if not coreApp.debug:
 
 
 
-# log into file
-if not coreApp.debug:
-    import logging
-    from logging.handlers import RotatingFileHandler
-    file_handler = RotatingFileHandler('data/coreApp.log', 'a', 1 * 1024 * 1024, 10) # log file size limited to 1Mb ; keep last 10 log files as backup
-    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-    coreApp.logger.setLevel(logging.INFO)
-    file_handler.setLevel(logging.INFO)
-    coreApp.logger.addHandler(file_handler)
-    coreApp.logger.info('coreApp startup')
+
+### i'm using my own logfile system; see in config.py
+# if not coreApp.debug:
+#     import logging
+#     from logging.handlers import RotatingFileHandler
+#     file_handler = RotatingFileHandler('data/coreApp.log', 'a', 1 * 1024 * 1024, 10) # log file size limited to 1Mb ; keep last 10 log files as backup
+#     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+#     coreApp.logger.setLevel(logging.INFO)
+#     file_handler.setLevel(logging.INFO)
+#     coreApp.logger.addHandler(file_handler)
+#     coreApp.logger.info('coreApp startup')
+

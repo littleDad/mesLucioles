@@ -1,5 +1,8 @@
 # -*- coding: utf8 -*-
 
+from sys import exc_info
+from config import LOGGER
+
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
@@ -11,19 +14,66 @@ from functools import wraps
 from babel.dates import format_date, datetime
 from sqlalchemy import desc
 
-app_name = coreApp.config['APP_NAME']
 
-@coreApp.route('/test')
-def test():
-    return render_template('test.html')
+# THIS FUNCTION SHOULD BE A STATIC_METHOD OF SPENDING() CLASS!
+def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
+    """
+        create a Spending in the database.
+          1) create the Spending model and fill its attributes except parts
+          2) estimate parts and add them to our Spending
+          3) adjust balance for each User with this parts
+          4) until no errors: add all of this in the database
+    """
+    try:
+        bill = Spending()
+        bill.timestamp = datetime.utcnow()
+        bill.s_type = s_type
+        bill.label = s_label
+        bill.total = s_total
+        bill.payer_id = s_payer_id
+        db.session.add(bill)
+
+        db.session.query(User).get(s_payer_id).given_money += float(bill.total)
+        
+        tmp_parts = bill.computeParts(db.session, len(s_user_ids))
+        user_parts = []
+        for idx, i in enumerate(tmp_parts):
+            db.session.add(
+                Spending.Part(
+                    spending=bill,
+                    total=i, # == tmp_parts[idx],
+                    user_id=s_user_ids[idx]
+                )
+            )
+            user_parts.append([s_user_ids[idx], i])
+        
+        for user_id, user_bill in user_parts:
+            db.session.query(User).get(user_id).borrowed_money += user_bill
+
+        db.session.commit()
+        return 1
+    except:
+        db.session.rollback()
+        LOGGER.p_log(u'impossible d\'ajouter la dépense', exception=exc_info())     
+        return 0
+
+
+def delBill():
+    return 1
+
+
+
+
+
+
+
+app_name = coreApp.config['APP_NAME']
 
 ### BEGIN: DECORATORS ###
 @coreApp.before_request # any method that are decorated with before_request will run before the view method each time a request is received
 def before_request():
     g.user = current_user # GLOBAL var to simplify access, notably in templates (global current_user is set by Flask)
     if g.user.is_authenticated:
-        print 'user identifié'
-        print g.user
         g.user.last_connection = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
@@ -250,12 +300,12 @@ def comptes(spends_page):
 
     # delete a spending and his parts
     if spends_page.split("_")[0] == "spendingdel":
-        # Spending.query.filter_by(
-        #     id=int(spends_page.split("_")[1])
-        # ).delete()
-        db.session.query(Spending).get(
+        Spending.query.filter_by(
             id=int(spends_page.split("_")[1])
         ).delete()
+        # db.session.query(Spending).get(
+        #     id=int(spends_page.split("_")[1])
+        # ).delete()
         parts = Spending.Part.query.filter_by(
             spending_id=int(spends_page.split("_")[1])
             ).delete()
@@ -272,21 +322,18 @@ def comptes(spends_page):
         form.payer_id.choices = users
         form.bill_user_ids.choices = users
         if form.validate_on_submit():
-            newSpend = Spending(
-                timestamp=form.date.data,
-                s_type=form.s_type.data,
-                label=form.label.data,
-                total=form.total.data,
-                payer_id=form.payer_id.data
-            )
-            newSpend.addParts(
-                db.session,
+            if addBill(
+                form.s_type.data,
+                form.label.data,
+                form.total.data,
+                form.payer_id.data,
                 form.bill_user_ids.data
-            )
-            db.session.add(newSpend)
-            db.session.commit()
-            flash(u'la dépense a bien été ajoutée')
-            return redirect(url_for('comptes', spends_page='depenses'))
+            ):
+                flash(u'la dépense a bien été ajoutée')
+                return redirect(url_for('comptes', spends_page='depenses'))
+            else:
+                flash(u'impossible d\'ajouter la dépense')
+                return redirect(url_for('comptes', spends_page='depenses'))
         else:
             for errors in form.errors.values():
                 for error in errors:
@@ -295,8 +342,8 @@ def comptes(spends_page):
 
             # query on spending.types
             types = []
-            for s_type in Spending.Type.query.all():
-                types.append(s_type.name)
+            for ttype in Spending.Type.query.all():
+                types.append(ttype.name)
 
             # query on spending.users
             """
@@ -321,16 +368,19 @@ def comptes(spends_page):
         payers = {}
         times = {}
         my_parts = {}
+        payer_ids = {}
         spendings = Spending.query.order_by(desc('timestamp')).all()
 
         for spending in spendings:
+            from pprint import pprint
+            pprint(spending)
             times[spending.id] = spending.getDate(current_user)
             payers[spending.id] = User.getName(spending.payer_id)
             my_parts[spending.id] = Spending.getPart(spending, current_user.id)
         return render_template('comptes.html',
             app_name=app_name,
             spends_page=spends_page,
-            rows=spendings,
+            spendings=spendings,
             times=times,
             payers=payers,
             my_parts=my_parts,

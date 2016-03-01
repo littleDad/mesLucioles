@@ -1,11 +1,11 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>glyph user</th>
-            <th>A payé</th>
-            <th>Doit</th>
+            <th><span class="glyphicon glyphicon-user"></span></th>
+            <th>payé</th>
+            <th>emprunté</th>
             <th>Balance</th>
-            <th><!-- pay back this user --></th>
+            <th>Virements</th>
         </tr>
     </thead>
     <tbody>
@@ -20,14 +20,14 @@
                 {% if user.given_money == 0 %}
                     --
                 {% else %}
-                    {{ user.given_money|replace(".", ",")|replace(",0", "") }} €
+                    {{ (user.given_money, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             <td>
                 {% if user.borrowed_money == 0 %}
                     --
                 {% else %}
-                    {{ user.borrowed_money|replace(".", ",")|replace(",0", "") }} €
+                    {{ (user.borrowed_money, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             {% set balance = (user.given_money - user.borrowed_money) %}
@@ -40,10 +40,10 @@
                 {% if balance == 0 %}
                     --
                 {% else %}
-                    {{ balance|replace(".", ",")|replace(",0", "") }} €
+                    {{ (balance, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
-            <td>{% if user != g.user %}<a>virement</a>{% endif %}</td>
+            <td>{% if user != g.user %}<a><span class="glyphicon glyphicon-usd"></span><span class="glyphicon glyphicon-new-window"></span></a><!-- pay back this user -->{% endif %}</td>
         </tr>
     {% endfor %}
     </tbody>

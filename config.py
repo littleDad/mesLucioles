@@ -6,9 +6,11 @@ import os
 #APP_NAME = "La Psycholoc"
 APP_NAME = "Hackz' your friends (beta!)"
 
-from logger_03 import LogFile
+from logger_04 import LogFile
 LOGGER = LogFile('data/app.log')
 LOGGER.initself()
+LOGGER.p_log(u'démarrage de l\'appli')
+
 
 # activates the cross-site request forgery (CSRF) prevention
 WTF_CSRF_ENABLED = True 

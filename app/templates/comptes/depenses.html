@@ -15,25 +15,23 @@
         </tr>
     </thead>
     <tbody>
-    {% for depense in rows %}
+    {% for depense in spendings %}
         <tr>
             <td>{{ times[depense.id] }}</td>
             <td>{{ depense.s_type }}</td> 
             <td>{{ depense.label }}</td>
-            <td>{{ depense.total|replace(".", ",")|replace(",0", "") }} €</td>
-            <td>{% if depense.payer_id == g.user.id %}
-                Moi{% else %}
-                    {% if depense.payer_id.firstname %}
-                        {{ depense.payer_id.firstname }}
-                    {% else %}
-                        {{ depense.payer_id.email }}
-                    {% endif %}
+            <td>{{ (depense.total, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}</td>
+            <td>
+                {% if depense.payer_id == g.user.id %}
+                    Moi
+                {% else %}
+                    {{ payers[depense.id] }}
                 {% endif %}
             </td>
                 
             <td>{% if my_parts[depense.id] == 0 %}--
             {% else %}
-            {{ my_parts[depense.id]|replace(".", ",")|replace(",0", "") }} €
+            {{ (my_parts[depense.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
             {% endif %}
             </td>
             {# ToDo

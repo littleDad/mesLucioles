@@ -41,12 +41,12 @@ def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
         bill = Spending()
         bill.timestamp = datetime.utcnow()
         bill.s_type = s_type
-        bill.label = label
+        bill.label = unicode(label, 'utf-8')
         bill.total = total
         bill.payer_id = payer_id
         db.session.add(bill)
 
-        db.session.query(User).get(payer_id).given_money += 12
+        db.session.query(User).get(payer_id).given_money += bill.total
      
         
         tmp_parts = bill.computeParts(db.session, len(s_user_ids))
@@ -66,24 +66,21 @@ def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
             db.session.query(User).get(user_id).borrowed_money += user_bill
 
         db.session.commit()
+        return 1
     except:
         db.session.rollback()
         print exc_info()
-        
-
+        return 0
 
 def addTypes():
-        t1 = models.Spending.Type(name=u"Alimentation")
-        db.session.add(t1)
-        t2 = models.Spending.Type(name=u"Alcool")
-        db.session.add(t2)
-        t3 = models.Spending.Type(name=u"Divers")
-        db.session.add(t3)
-        t4 = models.Spending.Type(name=u"Charges")
-        db.session.add(t4)
-        t5 = models.Spending.Type(name=u"Bien-être")
-        db.session.add(t5)
-        db.session.commit()
+    db.session.add(models.Spending.Type(name=u"Alimentation (🍆)"))
+    db.session.add(models.Spending.Type(name=u"Alimentation (🍖)"))
+    db.session.add(models.Spending.Type(name=u"Alcool"))
+    db.session.add(models.Spending.Type(name=u"Divers"))
+    db.session.add(models.Spending.Type(name=u"Charges"))
+    db.session.add(models.Spending.Type(name=u"Bien-être"))
+    db.session.add(models.Spending.Type(name=u"Sorties"))
+    db.session.commit()
 
 
 if __name__ == '__main__':
@@ -100,23 +97,21 @@ if __name__ == '__main__':
             timezone = None
 
         addUser(email, passwd, firstname, timezone)
+    
+    # initialization
     if (argv[1] == str(1)) or (argv[1] == "init"):
         addTypes()
         db.session.add(models.User(email='b@t', password='coucou', firstname='Batoo'))
         db.session.add(models.User(email='b@2t', password='coucou'))
-        db.session.add(models.User(email='b@t3', password='coucou'))
         db.session.commit()
+    
+    # test of adding a bill
     if argv[1] == str(2):
         s_type = 'Alimentation'
         label = 'Carottes'
-        total = 23.23
+        total = 56.12
         payer_id = 1
         user_ids = [1, 2]
         addBill(s_type, label, total, payer_id, user_ids) #spend=models.Spending.query.filter_by(id=1).first())
         
         print 'données de test initiales ajoutées: OK.'
-    if argv[1] == str(3):
-        # print Spending.getPart(spending, current_user.id)
-        t = db.session.query(Spending).first()
-        for part in t.parts:
-            print part.total

@@ -6,7 +6,7 @@ $(document.body).on('click', '.dropdown-menu li', function(event) {
         .end()
      .children('.dropdown-toggle').dropdown('toggle');
     var $dataName = $target.closest('.btn-group').attr("name")    
-    if($dataName == "type") {
+    if($dataName == "s_type") {
         var return_value = $target.text();
     }
     if ($dataName == "payer_id") {
@@ -54,15 +54,15 @@ $(document.body).on('click', '.dropdown-menu li', function(event) {
         </div>
 
         <div class="form-group">
-            <p>{{ form.type.label }}</p>
-            <div class="btn-group btn-input" name="type">
+            <p>{{ form.s_type.label }}</p>
+            <div class="btn-group btn-input" name="s_type">
                 <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle form-control">
                     <span data-bind="label"></span> <span class="caret"></span> <em class="glyphicon glyphicon-th-list"></em>
                 </button>
-                {{ form.type }}
+                {{ form.s_type }}
                 <ul class="dropdown-menu">
-                    {% for type in types %}
-                        <li><a href="#">{{ type }}</a></li>
+                    {% for ttype in types %}
+                        <li><a href="#">{{ ttype }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

@@ -16,11 +16,13 @@
         {# {% if not g.user.is_anonymous() %} #}
         {% if g.user.is_authenticated %}
             <div class='navbar navbar-fixed-top'>
-                    <em class="glyphicon glyphicon-user"></em>
                     <b>
-                        {% if g.user.firstname %}{{ g.user.firstname }}
-                        {% else %}{{ g.user.email }}
-                        {% endif %}
+                        <a href="{{ url_for('getUser', email=g.user.email) }}">
+                            <em class="glyphicon glyphicon-user"></em>
+                            {% if g.user.firstname %}{{ g.user.firstname }}
+                            {% else %}{{ g.user.email }}
+                            {% endif %}
+                        </a>
                     </b>
                     (<a href="{{ url_for('logout') }}" class="glyphicon glyphicon-off"></a>)
             </div>

@@ -68,7 +68,6 @@ class AddSpendingForm(Form):
         default=datetime.today
     )
     s_type = HiddenField(u'Catégorie', validators=[DataRequired(u"la catégorie ?")])
-    #payer_id = HiddenField(u'Qui a payé ?', validators=[DataRequired(u"qui a payé pour cette dépense ? toi ?")])
     payer_id = SelectField(u'Qui a payé ?', coerce=int)
     bill_user_ids = MultiCheckboxField(u'Pour qui ?')
     submit = SubmitField(u"Ajouter la dépense")
