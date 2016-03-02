@@ -214,3 +214,9 @@ ui-autocomplete-input{
     border-radius: 15px 70px 15px 70px;
     background-color: red;
 }
+
+
+/* MESS */
+.modal-dialog {
+    width: 350px;
+}

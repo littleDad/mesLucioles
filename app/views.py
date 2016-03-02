@@ -432,26 +432,19 @@ def getSpending(id):
               #  * réussir à remettre le champ catégorie avec du js
               #  * récupérer les bill_user_ids depuis les parts pour remettre les cases de "Pour qui ?"
               #  * bien gérer les parts, donc ajouter un bouton "recalculer les parts"
-            form.bill_user_ids.data = "bill.bill_user_ids"
 
             types = []
             for ttype in Spending.Type.query.all():
                 types.append(ttype.name)
 
 
-        return render_template('comptes.html',
+        return render_template(
+            'comptes.html',
             app_name=app_name,
             form=form,
             types=types,
-            spends_page="ajoutDepense"
+            spends_page="ajoutDepense"  # quite a hack... must be corrected
         )
-    
-    return render_template(
-        'comptes.html',
-        app_name=app_name,
-        form=form,
-        spends_page="ajoutDepense"  # quite a hack... must be corrected
-    )
 
 
 
@@ -490,12 +483,11 @@ def delSpending(id):
             flash(u'impossible de supprimer la dépense')
             LOGGER.p_log(u'impossible de supprimer la dépense', exception=exc_info())   
 
-    return render_template('comptes.html', app_name=app_name, spends_page='depenses')
-    # return redirect(
-    #     url_for(
-    #     'comptes',
-    #     spends_page='depenses'
-    # ))
+    return redirect(
+        url_for(
+        'comptes',
+        spends_page='depenses'
+    ))
 
 
 ### END: COMPTES ###

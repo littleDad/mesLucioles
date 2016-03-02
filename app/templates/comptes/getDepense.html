@@ -1,0 +1,113 @@
+{#
+ATTENTION, TEMPLATE LARGEMENT POMPÉ DE 'ajoutDepense.html' duquel il devrait d'ailleurs hériter une fois les problèmes résolués (voir dans views.py la fonction getSpending)
+#}
+
+<script>
+$(document.body).on('click', '.dropdown-menu li', function(event) {
+    var $target = $(event.currentTarget);
+    $target.closest('.btn-group')
+     .find('[data-bind="label"]').text($target.text())
+        .end()
+     .children('.dropdown-toggle').dropdown('toggle');
+    var $dataName = $target.closest('.btn-group').attr("name")    
+    if($dataName == "s_type") {
+        var return_value = $target.text();
+    }
+    if ($dataName == "payer_id") {
+        var return_value = parseInt($(this).attr('data-value'));
+    }
+    $("#"+$dataName).val(return_value);
+    return false;
+   });
+</script>
+
+<div class="row clearfix col-md-4">
+    <form action="" method="post">
+        
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.label.label }}
+            {{ form.label(size=20, maxlength=20) }}
+        </div>
+
+        <div class="form-group">
+            {{ form.total.label }}
+            {{ form.total }}
+        </div>
+
+        <div class="form-group">
+            {{ form.date.label }}
+            <div class="input-group">
+                {{ form.date(class='datepicker-input') }}
+                <em class="glyphicon glyphicon-calendar"></em>
+            </div>
+            <script type="text/javascript">
+                $(".datepicker-input").each(function() {
+                    $(this).datepicker({
+                        format: "dd/mm/yyyy",
+                        weekStart: 1
+                    });
+                });
+                $(".datepicker-input").click(function() {
+                    $(".datepicker-days .day").click(function() {
+                        $('.datepicker').hide();
+                    });
+                });
+            </script>
+        </div>
+
+        <div class="form-group">
+            <p>{{ form.s_type.label }}</p>
+            <div class="btn-group btn-input" name="s_type">
+                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle form-control">
+                    <span data-bind="label"></span> <span class="caret"></span> <em class="glyphicon glyphicon-th-list"></em>
+                </button>
+                {{ form.s_type }}
+                <ul class="dropdown-menu">
+                    {% for ttype in types %}
+                        <li><a href="#">{{ ttype }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <p>{{ form.payer_id.label }}</p>
+            {{ form.payer_id }}
+        </div>
+
+
+{#
+        <div class="form-group">
+            <p>{{ form.payer_id.label }}</p>
+            <div class="btn-group btn-input" name="payer_id">
+                <button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle form-control">
+                    <span data-bind="label"></span> <span class="caret"></span> <em class="glyphicon glyphicon-user"></em>
+                </button>
+                {{ form.payer_id }}
+                <ul class="dropdown-menu">
+                    {% for id, name in users %}
+                        <li data-value="{{ id }}"><a href="#">{{ name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+#}
+
+        <div class="form-group">
+            {{ form.bill_user_ids.label }}
+            {{ form.bill_user_ids }}
+        </div>
+
+
+        {{ form.submit(class="btn btn-default") }}
+
+    </form>
+    <a
+        href="{{ url_for('comptes', spends_page='depenses') }}"
+        class="btn btn-default"
+        >Annuler
+    </a>
+</div>
