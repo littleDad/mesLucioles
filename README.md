@@ -22,6 +22,7 @@ Done :
 - la base de données en sqlite
 - le module de gestion des comptes (money!)
 - addBill(gérer l'initialisation des balances)
+- edit password
 
 
 ToDo :

@@ -156,7 +156,7 @@ def try_login(email, password):
         print 'user is NONE'
         flash(u'mmh... mauvaise adresse mail !')
         return redirect(url_for('index'))
-    elif user.password == password:
+    elif user.check_password(password):
         print 'mail et password concordent'
         remember_me = False
         if 'remember_me' in session:
@@ -213,13 +213,25 @@ def getUser(email):
         return render_template('getUsers.html', users=users, app_name=app_name)
     else:
         if form.validate_on_submit():
-            g.user.firstname = form.firstname.data
-            g.user.email = form.email.data
-            g.user.timezone = form.timezone.data
-            db.session.add(g.user)
-            db.session.commit()
-            flash(u'tes modifs\' sont bien enregistrées')
+            try:
+                g.user.firstname = form.firstname.data
+                g.user.email = form.email.data
+                g.user.timezone = form.timezone.data
+                if form.new_password.data != '':
+                    print 'nouveau password is %s' % form.new_password.data
+                    g.user.set_password(form.new_password.data)
+                db.session.add(g.user)
+                db.session.commit()
+                flash(u'tes modifs\' sont bien enregistrées')
+            except:
+                db.session.rollback()
+                flash(u'ERREUR : impossible d\'enregistrer tes modifs !')
+                LOGGER.p_log(u'impossible d\'enregistrer les modifs', exception=exc_info())  
         else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+                    print error
             form.firstname.data = g.user.firstname
             form.email.data = g.user.email
             form.timezone.data = g.user.timezone

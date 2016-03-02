@@ -22,23 +22,40 @@ class EditUserForm(Form):
     email = StringField('email', validators=[DataRequired()])
     firstname = StringField('firstname', validators=[DataRequired()])
     timezone = StringField('timezone', validators=[DataRequired()])
+    new_password = PasswordField('new_password', [optional()], default='')
 
     def __init__(self, original_mail, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
         self.original_mail = original_mail
 
     def validate(self):
+        flag_mail = False
         if not Form.validate(self):
             return False
-        elif self.email.data == self.original_mail:
-            return True
+        
+        if self.email.data == self.original_mail:
+            flag_mail = True
         else:
             user = User.query.filter_by(email=self.email.data).first()
             if user != None:
                 self.email.errors.append(u'ce mail est déjà pris !')
-                return False
+                flag_mail = False
             else:
-                return True
+                flag_mail = True
+       
+        if not flag_mail:
+            return False 
+        
+        print 'FOO'
+        if self.new_password.data == '':
+            return True
+        else:
+            print 'FOO2'
+            # implement some other checks on this new password
+            if len(self.new_password.data) < 9:
+                self.new_password.errors.append(u'ton mot de passe doit contenir au moins 8 caractères !')
+                return False
+            return True
             
 class AddUserForm(Form):
     """

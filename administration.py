@@ -101,8 +101,12 @@ if __name__ == '__main__':
     # initialization
     if (argv[1] == str(1)) or (argv[1] == "init"):
         addTypes()
-        db.session.add(models.User(email='b@t', password='coucou', firstname='Batoo'))
-        db.session.add(models.User(email='b@2t', password='coucou'))
+        a = models.User(email='b@t', firstname='Batoo')
+        a.set_password('coucou')
+        db.session.add(a)
+        b = models.User(email='b@2t')
+        b.set_password('coucou23')
+        db.session.add(b)
         db.session.commit()
     
     # test of adding a bill

@@ -26,14 +26,16 @@
         <div class="form-group">email :
             {% if user.id == g.user.id %}
                 {{ form.email(maxlength=120) }}
-                
                     {% for error in form.errors.email %}
                         <div><i style="color:red">{{ error }}</i></div>
                     {% endfor %}
-                
             {% else %}
                 {{ user.email}}
             {% endif %}
+        </div>
+
+        <div class="form-group">mot de passe :
+                {{ form.new_password(readonly=1, onfocus="this.removeAttribute('readonly');") }}
         </div>
 
         <div class="form-group">timezone (fuseau horaire) :

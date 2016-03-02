@@ -6,6 +6,8 @@ from config import WHOOSH_ENABLED, LOGGER # pour le support de la recherche dans
 from random import randint
 from decimal import Decimal as dec, getcontext
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -46,6 +48,15 @@ class User(db.Model):
             return unicode(self.id)  # python 2
         except NameError:
             return str(self.id)  # python 3
+
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        print 'COUCOU'
+        print self
+        return check_password_hash(self.password, password)
 
     def getPasswd(self):
         "envoie un mail avec un nouveau mot de passe"
