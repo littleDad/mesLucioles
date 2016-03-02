@@ -99,12 +99,10 @@ class SpendingForm(Form):
             if (self.bill_user_ids.data == []):
                 self.bill_user_ids.errors.append(u"à qui profite cette dépense ?")
                 return False
-            total = (self.total.data).replace(" ","").replace(",",".")
-            total = float(total)
-            if len(str(total - int(total))) > 4:  # how many centimes?
+            self.total.data = (self.total.data).replace(" ","").replace(",",".")
+            self.total.data = float(self.total.data)
+            if len(str(self.total.data - int(self.total.data))) > 4:  # how many centimes?
                 self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
                 return False
-            print 'FOOBAR'
-            print self.s_date.data
             return True
 
