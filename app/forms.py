@@ -46,13 +46,12 @@ class EditUserForm(Form):
         if not flag_mail:
             return False 
         
-        print 'FOO'
         if self.new_password.data == '':
             return True
         else:
-            print 'FOO2'
             # implement some other checks on this new password
-            if len(self.new_password.data) < 9:
+            print len(self.new_password.data)
+            if len(self.new_password.data) < 8:
                 self.new_password.errors.append(u'ton mot de passe doit contenir au moins 8 caractères !')
                 return False
             return True
