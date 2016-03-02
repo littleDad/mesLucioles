@@ -58,7 +58,7 @@ class AddUserForm(Form):
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
-class AddSpendingForm(Form):
+class SpendingForm(Form):
     label = StringField(u'Titre', validators=[DataRequired(u"t'as oublié le titre !")])
     total = StringField(u'Montant', validators=[DataRequired(u"le montant est absent, ou n'est pas correct.")])
     date = DateField(
@@ -70,7 +70,7 @@ class AddSpendingForm(Form):
     s_type = HiddenField(u'Catégorie', validators=[DataRequired(u"la catégorie ?")])
     payer_id = SelectField(u'Qui a payé ?', coerce=int)
     bill_user_ids = MultiCheckboxField(u'Pour qui ?')
-    submit = SubmitField(u"Ajouter la dépense")
+    submit = SubmitField(u"Enregistrer la dépense")
     
     
     def validate(self):

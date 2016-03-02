@@ -1,6 +1,6 @@
                     <h1>
                         <span class="btn btn-navbar" data-target=".nav-collapse" data-toggle="collapse" type="button">
-                            <em class="glyphicon glyphicon-chevron-down"></em>
+                            <em class="glyphicon glyphicon-sort-by-attributes"></em>
                             menu
                             <em class="glyphicon glyphicon-pushpin"></em>
                         </span>
@@ -72,7 +72,7 @@
                                 <a href="{{ url_for('thewall') }}"><li>Mur principal</li></a>
                                 <a href="{{ url_for('comptes', spends_page=session['spends_page']) }}"><li>Comptes</li></a>
                                 <a href="{{ url_for('getUser', email=g.user.email) }}"><li>Mon profil</li></a>
-                                <a href="{{ url_for('getUsers') }}"><li>Tous les profils</li></a>
+                                <a href="{{ url_for('getUsers') }}"><li>Mes colocs</li></a>
                                 {#
                                 <a href="{{ url_for('calendrier') }}"><li>Calendrier</li></a>
                                 #}

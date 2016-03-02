@@ -7,7 +7,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 
 from app import coreApp, db, lm
-from .forms import LoginForm, LostPasswdForm, EditUserForm, AddUserForm, AddSpendingForm
+from .forms import LoginForm, LostPasswdForm, EditUserForm, AddUserForm, SpendingForm
 from .models import User, Spending
 
 from functools import wraps
@@ -249,14 +249,10 @@ def addUser():
         )
         db.session.add(user)
         db.session.commit()
-        print user.id
         u_balance = Balance(user_id=user.id)
         db.session.add(u_balance)
         db.session.commit()
-        print ''
-        print ''
-        print ''
-        print u_balance.id
+
         user.balance = u_balance.id
         db.session.commit()
         flash(u'utilisateur enregistré !')
@@ -298,26 +294,9 @@ def comptes(spends_page):
                 et là : http://wtforms.simplecodes.com/docs/1.0.1/specific_problems.html
     """
 
-    # delete a spending and his parts
-    if spends_page.split("_")[0] == "spendingdel":
-        Spending.query.filter_by(
-            id=int(spends_page.split("_")[1])
-        ).delete()
-        # db.session.query(Spending).get(
-        #     id=int(spends_page.split("_")[1])
-        # ).delete()
-        parts = Spending.Part.query.filter_by(
-            spending_id=int(spends_page.split("_")[1])
-            ).delete()
-        db.session.commit()
-        spends_page="depenses"
-
-    session['spends_page'] = spends_page
-
-
     # add a spending to the database
     if spends_page == 'ajoutDepense':
-        form = AddSpendingForm()
+        form = SpendingForm()
         users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
         form.payer_id.choices = users
         form.bill_user_ids.choices = users
@@ -411,6 +390,112 @@ def comptes(spends_page):
         app_name=app_name,
         spends_page='depenses'
     ))
+
+
+@coreApp.route('/comptes/getDepense/<id>', methods=['GET', 'POST'])
+@login_required
+def getSpending(id):
+    bill = Spending.query.get(id)
+    form = SpendingForm()
+    if bill is None:
+        flash(u'Dépense (id = %s) introuvable' % id)
+        return redirect(url_for(
+            'comptes',
+            app_name=app_name,
+            spends_page='depenses'
+        ))
+    else:
+        if form.validate_on_submit():
+            g.user.firstname = form.firstname.data
+            g.user.email = form.email.data
+            g.user.timezone = form.timezone.data
+            db.session.add(g.user)
+            db.session.commit()
+            flash(u'tes modifs\' sont bien enregistrées')
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+                    print error
+
+            users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
+            form.payer_id.choices = users
+            form.bill_user_ids.choices = users
+
+            form.label.data = bill.label
+            form.total.data = bill.total
+            form.date.data = bill.timestamp
+            form.s_type.data = bill.s_type
+            form.payer_id.data = bill.payer_id
+            # à partir d'ici c'est plus aussi simple, il faut récupérer les champs à partir des parts. d'ailleurs il faut gérer parts pour l'édition. un peu galère ! :/
+              #ToDo:
+              #  * réussir à remettre le champ catégorie avec du js
+              #  * récupérer les bill_user_ids depuis les parts pour remettre les cases de "Pour qui ?"
+              #  * bien gérer les parts, donc ajouter un bouton "recalculer les parts"
+            form.bill_user_ids.data = "bill.bill_user_ids"
+
+            types = []
+            for ttype in Spending.Type.query.all():
+                types.append(ttype.name)
+
+
+        return render_template('comptes.html',
+            app_name=app_name,
+            form=form,
+            types=types,
+            spends_page="ajoutDepense"
+        )
+    
+    return render_template(
+        'comptes.html',
+        app_name=app_name,
+        form=form,
+        spends_page="ajoutDepense"  # quite a hack... must be corrected
+    )
+
+
+
+@coreApp.route('/comptes/supprDepense/<id>', methods=['GET', 'POST'])
+@login_required
+def delSpending(id):
+    bill = Spending.query.get(int(id))
+
+    if bill is None:
+        flash(u'Dépense (id = %s) introuvable' % id)
+        return redirect(url_for(
+            'comptes',
+            app_name=app_name,
+            spends_page='depenses'
+        ))
+
+    else:
+        print "on supprime %s" % bill.label
+        try:
+            # delete associated parts and reset users' balances
+            parts = Spending.Part.query.filter_by(
+                    spending_id=int(id)
+                )#.delete()
+            bill.query.delete()
+            for part in parts:
+                db.session.query(User).get(part.user_id).borrowed_money -= part.total
+                part.query.delete()
+
+            db.session.query(User).get(bill.payer_id).given_money -= bill.total
+
+            # and finally delete the bill
+            db.session.commit()
+            flash(u'dépense supprimée')
+        except:
+            db.session.rollback()
+            flash(u'impossible de supprimer la dépense')
+            LOGGER.p_log(u'impossible de supprimer la dépense', exception=exc_info())   
+
+    return render_template('comptes.html', app_name=app_name, spends_page='depenses')
+    # return redirect(
+    #     url_for(
+    #     'comptes',
+    #     spends_page='depenses'
+    # ))
 
 
 ### END: COMPTES ###
