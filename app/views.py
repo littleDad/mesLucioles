@@ -16,7 +16,7 @@ from sqlalchemy import desc
 
 
 # THIS FUNCTION SHOULD BE A STATIC_METHOD OF SPENDING() CLASS!
-def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
+def addBill(s_date, s_type, s_label, s_total, s_payer_id, s_user_ids):
     """
         create a Spending in the database.
           1) create the Spending model and fill its attributes except parts
@@ -27,6 +27,7 @@ def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
     try:
         bill = Spending()
         bill.timestamp = datetime.utcnow()
+        bill.s_date = s_date
         bill.s_type = s_type
         bill.label = s_label
         bill.total = s_total
@@ -313,6 +314,7 @@ def comptes(spends_page):
         form.bill_user_ids.choices = users
         if form.validate_on_submit():
             if addBill(
+                form.s_date.data,
                 form.s_type.data,
                 form.label.data,
                 form.total.data,

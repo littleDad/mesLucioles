@@ -101,7 +101,9 @@ class WallMessage(db.Model):
 
 class Spending(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    timestamp = db.Column(db.DateTime) # attention, à l'utilisation : enregistrer le temps UTC, parce qu'on a potentiellement des users du monde entier !
+    # attention, à l'utilisation : enregistrer le temps UTC, parce qu'on a potentiellement des users du monde entier !
+    timestamp = db.Column(db.DateTime)  # addition in the database date
+    s_date = db.Column(db.DateTime)  # date from the real world
     s_type = db.Column(db.String(30)) # maybe an enumerate type in the future?
     label = db.Column(db.String(50))
     total = db.Column(db.Float(10))
@@ -115,8 +117,7 @@ class Spending(db.Model):
 
     def getDate(self, user):
         """return spending (self) bought date attribute according to user timezone"""
-
-        return format_date(self.timestamp, "d MMM", locale=user.timezone)
+        return format_date(self.s_date, "d MMM", locale=user.timezone)
 
 
 

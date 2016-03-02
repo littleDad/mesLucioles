@@ -77,7 +77,7 @@ class MultiCheckboxField(SelectMultipleField):
 class SpendingForm(Form):
     label = StringField(u'Titre', validators=[DataRequired(u"t'as oublié le titre !")])
     total = StringField(u'Montant', validators=[DataRequired(u"le montant est absent, ou n'est pas correct.")])
-    date = DateField(
+    s_date = DateField(
         u'Date',
         [required(u"la date ?")],
         format="%d/%m/%Y",
@@ -104,5 +104,7 @@ class SpendingForm(Form):
             if len(str(total - int(total))) > 4:  # how many centimes?
                 self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
                 return False
+            print 'FOOBAR'
+            print self.s_date.data
             return True
 
