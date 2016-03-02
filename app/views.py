@@ -218,7 +218,6 @@ def getUser(email):
                 g.user.email = form.email.data
                 g.user.timezone = form.timezone.data
                 if form.new_password.data != '':
-                    print 'nouveau password is %s' % form.new_password.data
                     g.user.set_password(form.new_password.data)
                 db.session.add(g.user)
                 db.session.commit()
