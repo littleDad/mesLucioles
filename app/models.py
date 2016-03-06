@@ -79,11 +79,17 @@ class User(db.Model):
         exec('self.'+str(m_type)+str(order)+'= '+str(amount))
         exec('print self.'+str(m_type))
 
-    @staticmethod
-    def getName(ID):
-        user = User.query.filter_by(id=ID).first().firstname
+
+    def getName(self):
+        user = User.query.filter_by(id=self.id).first().firstname
         if user == "inconnu(e)":
-            return User.query.filter_by(id=ID).first().email
+            return User.query.filter_by(id=self.id).first().email
+        return user
+    @staticmethod
+    def getNameStatic(user_id):
+        user = User.query.filter_by(id=user_id).first().firstname
+        if user == "inconnu(e)":
+            return User.query.filter_by(id=user_id).first().email
         return user
 
 

@@ -309,7 +309,7 @@ def comptes(spends_page):
     # add a spending to the database
     if spends_page == 'ajoutDepense':
         form = SpendingForm()
-        users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
+        users = [(user.id, user.getName()) for user in User.query.order_by('id')]
         form.payer_id.choices = users
         form.bill_user_ids.choices = users
         if form.validate_on_submit():
@@ -342,7 +342,7 @@ def comptes(spends_page):
             users = User.query.all()
             c_users = []
             for user in users:
-                c_users.append((user.id, str(User.getName(user.id))))
+                c_users.append((user.id, str(User.getNameStatic(user.id))))
             """
 
             return render_template(
@@ -367,7 +367,7 @@ def comptes(spends_page):
             from pprint import pprint
             pprint(spending)
             times[spending.id] = spending.getDate(current_user)
-            payers[spending.id] = User.getName(spending.payer_id)
+            payers[spending.id] = User.getNameStatic(spending.payer_id)
             my_parts[spending.id] = Spending.getPart(spending, current_user.id)
         return render_template('comptes.html',
             app_name=app_name,
@@ -431,7 +431,7 @@ def getSpending(id):
                     flash(error)
                     print error
 
-            users = [(user.id, user.getName(user.id)) for user in User.query.order_by('id')]
+            users = [(user.id, user.getName()) for user in User.query.order_by('id')]
             form.payer_id.choices = users
             form.bill_user_ids.choices = users
 
@@ -464,6 +464,8 @@ def getSpending(id):
 @coreApp.route('/comptes/supprDepense/<id>', methods=['GET', 'POST'])
 @login_required
 def delSpending(id):
+    print int(id)
+    print 'POUF'
     bill = Spending.query.get(int(id))
 
     if bill is None:
@@ -478,12 +480,14 @@ def delSpending(id):
         print "on supprime %s" % bill.label
         try:
             # delete associated parts and reset users' balances
-            parts = Spending.Part.query.filter_by(
+            parts = db.session.query(Spending.Part).filter_by(
                     spending_id=int(id)
-                )#.delete()
+                ).all()
             db.session.delete(bill)
             for part in parts:
-                db.session.query(User).get(part.user_id).borrowed_money -= part.total
+                u_tmp = db.session.query(User).filter_by(id=part.user_id).first()
+                u_tmp.borrowed_money -= part.total
+                LOGGER.p_log(u"%s récupère %s € !" % (u_tmp.getName(), part.total))
                 db.session.delete(part)
 
             db.session.query(User).get(bill.payer_id).given_money -= bill.total
