@@ -481,10 +481,10 @@ def delSpending(id):
             parts = Spending.Part.query.filter_by(
                     spending_id=int(id)
                 )#.delete()
-            bill.query.delete()
+            db.session.delete(bill)
             for part in parts:
                 db.session.query(User).get(part.user_id).borrowed_money -= part.total
-                part.query.delete()
+                db.session.delete(part)
 
             db.session.query(User).get(bill.payer_id).given_money -= bill.total
 

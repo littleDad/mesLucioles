@@ -23,10 +23,11 @@ Done :
 - le module de gestion des comptes (money!)
 - addBill(gérer l'initialisation des balances)
 - edit password
-
+- delBill
 
 ToDo :
-- editBill and delBill
+- editBill 
+- remboursements
 - gérer les exceptions (vérification de l'ajout de dépenses négatives, des centimes en trop, etc.)
 
 
