@@ -15,8 +15,8 @@ class User(db.Model):
     firstname = db.Column(db.String(64), index=True, default=u'inconnu(e)')
     last_connection = db.Column(db.DateTime)
     timezone = db.Column(db.String(5), default='fr_FR')
-    given_money = db.Column(db.Float(10), default=0)
-    borrowed_money = db.Column(db.Float(10), default=0)
+    # given_money = db.Column(db.Float(10), default=0)
+    # borrowed_money = db.Column(db.Float(10), default=0)
     spends = db.relationship('Spending', backref='payer', lazy='dynamic') # so we can use Spending.payer to get the User instance that created a Spending
 
     @staticmethod

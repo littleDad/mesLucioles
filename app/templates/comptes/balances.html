@@ -17,30 +17,29 @@
                 {% endif %}
             </a></td>
             <td>
-                {% if user.given_money == 0 %}
+                {% if users_given_money[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (user.given_money, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ (users_given_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             <td>
-                {% if user.borrowed_money == 0 %}
+                {% if users_borrowed_money[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (user.borrowed_money, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ (users_borrowed_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
-            {% set balance = (user.given_money - user.borrowed_money) %}
             <td
                 style=
-                    {% if balance < 0 %}"color: red">
+                    {% if users_balances[user.id] < 0 %}"color: red">
                     {% else %}"color: green">
                     {% endif %}
 
-                {% if balance == 0 %}
+                {% if users_balances[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (balance, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ (users_balances[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             <td>{% if user != g.user %}<a><span class="glyphicon glyphicon-usd"></span><span class="glyphicon glyphicon-new-window"></span></a><!-- pay back this user -->{% endif %}</td>

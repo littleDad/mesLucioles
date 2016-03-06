@@ -13,6 +13,7 @@ from .models import User, Spending
 from functools import wraps
 from babel.dates import format_date, datetime
 from sqlalchemy import desc
+from sqlalchemy.sql import func
 
 
 # THIS FUNCTION SHOULD BE A STATIC_METHOD OF SPENDING() CLASS!
@@ -34,7 +35,7 @@ def addBill(s_date, s_type, s_label, s_total, s_payer_id, s_user_ids):
         bill.payer_id = s_payer_id
         db.session.add(bill)
 
-        db.session.query(User).get(s_payer_id).given_money += float(bill.total)
+        # db.session.query(User).get(s_payer_id).given_money += float(bill.total)
         
         tmp_parts = bill.computeParts(db.session, len(s_user_ids))
         user_parts = []
@@ -48,8 +49,8 @@ def addBill(s_date, s_type, s_label, s_total, s_payer_id, s_user_ids):
             )
             user_parts.append([s_user_ids[idx], i])
         
-        for user_id, user_bill in user_parts:
-            db.session.query(User).get(user_id).borrowed_money += user_bill
+        # for user_id, user_bill in user_parts:
+        #     db.session.query(User).get(user_id).borrowed_money += user_bill
 
         db.session.commit()
         return 1
@@ -364,8 +365,6 @@ def comptes(spends_page):
         spendings = Spending.query.order_by(desc('timestamp')).all()
 
         for spending in spendings:
-            from pprint import pprint
-            pprint(spending)
             times[spending.id] = spending.getDate(current_user)
             payers[spending.id] = User.getNameStatic(spending.payer_id)
             my_parts[spending.id] = Spending.getPart(spending, current_user.id)
@@ -390,11 +389,38 @@ def comptes(spends_page):
     # list users' balances
     if spends_page == 'balances':
         users = User.query.order_by('user_id').all()
+        users_given_money = {}
+        users_borrowed_money = {}
+        users_balances = {}
+        user = users[0]
+        for user in users:
+            users_given_money[user.id] = db.session.query(func.sum(Spending.total)).filter_by(payer_id=user.id).all()[0][0]
+            if users_given_money[user.id] == None:
+                users_given_money[user.id] = 0.0
+            users_given_money[user.id] = float("{0:.2f}".format(
+                users_given_money[user.id]
+            ))
+            
+            users_borrowed_money[user.id] = db.session.query(func.sum(Spending.Part.total)).filter_by(user_id=user.id).all()[0][0]
+            if users_borrowed_money[user.id] == None:
+                users_borrowed_money[user.id] = 0.0
+            users_borrowed_money[user.id] = float("{0:.2f}".format(
+                users_borrowed_money[user.id]
+            ))
+
+            users_balances[user.id] = float("{0:.2f}".format(
+                users_given_money[user.id] - users_borrowed_money[user.id]
+            ))
+
+
         return render_template(
             'comptes.html',
             app_name=app_name,
             spends_page=spends_page,
-            users=users
+            users=users,
+            users_given_money=users_given_money,
+            users_borrowed_money=users_borrowed_money,
+            users_balances=users_balances
         )
 
     # else
@@ -464,8 +490,6 @@ def getSpending(id):
 @coreApp.route('/comptes/supprDepense/<id>', methods=['GET', 'POST'])
 @login_required
 def delSpending(id):
-    print int(id)
-    print 'POUF'
     bill = Spending.query.get(int(id))
 
     if bill is None:
@@ -486,11 +510,11 @@ def delSpending(id):
             db.session.delete(bill)
             for part in parts:
                 u_tmp = db.session.query(User).filter_by(id=part.user_id).first()
-                u_tmp.borrowed_money -= part.total
+                # u_tmp.borrowed_money -= part.total
                 LOGGER.p_log(u"%s récupère %s € !" % (u_tmp.getName(), part.total))
                 db.session.delete(part)
 
-            db.session.query(User).get(bill.payer_id).given_money -= bill.total
+            # db.session.query(User).get(bill.payer_id).given_money -= bill.total
 
             # and finally delete the bill
             db.session.commit()
