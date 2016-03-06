@@ -7,6 +7,7 @@ from random import randint
 from decimal import Decimal as dec, getcontext
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.sql import func
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -91,6 +92,27 @@ class User(db.Model):
         if user == "inconnu(e)":
             return User.query.filter_by(id=user_id).first().email
         return user
+
+    def getGiven_money(self):
+        given_money = db.session.query(func.sum(Spending.total)).filter_by(payer_id=self.id).all()[0][0]
+        if given_money == None:
+            given_money = 0.0
+        return float("{0:.2f}".format(
+            given_money
+        ))
+    def getBorrowed_money(self):
+        borrowed_money = db.session.query(
+            func.sum(Spending.Part.total)
+        ).filter_by(user_id=self.id).all()[0][0]
+        if borrowed_money == None:
+            borrowed_money = 0.0
+        return float("{0:.2f}".format(
+            borrowed_money
+        ))
+    def getBalance(self):
+        return float("{0:.2f}".format(
+            self.getGiven_money() - self.getBorrowed_money()
+        ))
 
 
 

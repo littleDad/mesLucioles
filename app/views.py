@@ -13,7 +13,6 @@ from .models import User, Spending
 from functools import wraps
 from babel.dates import format_date, datetime
 from sqlalchemy import desc
-from sqlalchemy.sql import func
 
 
 # THIS FUNCTION SHOULD BE A STATIC_METHOD OF SPENDING() CLASS!
@@ -394,24 +393,9 @@ def comptes(spends_page):
         users_balances = {}
         user = users[0]
         for user in users:
-            users_given_money[user.id] = db.session.query(func.sum(Spending.total)).filter_by(payer_id=user.id).all()[0][0]
-            if users_given_money[user.id] == None:
-                users_given_money[user.id] = 0.0
-            users_given_money[user.id] = float("{0:.2f}".format(
-                users_given_money[user.id]
-            ))
-            
-            users_borrowed_money[user.id] = db.session.query(func.sum(Spending.Part.total)).filter_by(user_id=user.id).all()[0][0]
-            if users_borrowed_money[user.id] == None:
-                users_borrowed_money[user.id] = 0.0
-            users_borrowed_money[user.id] = float("{0:.2f}".format(
-                users_borrowed_money[user.id]
-            ))
-
-            users_balances[user.id] = float("{0:.2f}".format(
-                users_given_money[user.id] - users_borrowed_money[user.id]
-            ))
-
+            users_given_money[user.id] = user.getGiven_money()
+            users_borrowed_money[user.id] = user.getBorrowed_money()
+            users_balances[user.id] = user.getBalance()
 
         return render_template(
             'comptes.html',
