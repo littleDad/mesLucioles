@@ -7,10 +7,22 @@ Ce module est codé en python avec le framework Flask.
 
 ###############################################################################
 QUICKSTART :
+  * créer l'environnement virtuel :
+        virtualenv env -p /usr/bin/python2 --no-site-packages
+
+  * installer les dépendances dans cet environnement
+        source env/bin/activate
+        pip install -r requirements.txt
+
   * générer la base : ./db_create.py
+
   * l'initialiser avec un jeu de test : ./administration init
+
   * lancer l'appli : ./run.py
-  * se connecter sur localhost:5000 avec les id b@t/coucou
+
+  * se connecter avec un navigateur web sur localhost:5000 avec les id b@t/coucou
+
+
 
 ###############################################################################
 
@@ -29,7 +41,8 @@ ToDo :
 - editBill 
 - remboursements
 - gérer les exceptions (vérification de l'ajout de dépenses négatives, des centimes en trop, etc.)
-
+- ajouter une calculatrice sur la page d'ajoutDepense
+- "tous" pour cocher les cases de 'pour qui cette dépense ?' dans ajoutDépense
 
 
 - encrypter et améliorer la gestion des mots de passe

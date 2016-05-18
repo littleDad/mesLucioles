@@ -361,7 +361,7 @@ def comptes(spends_page):
         times = {}
         my_parts = {}
         payer_ids = {}
-        spendings = Spending.query.order_by(desc('timestamp')).all()
+        spendings = Spending.query.order_by(desc('s_date')).all()
 
         for spending in spendings:
             times[spending.id] = spending.getDate(current_user)
