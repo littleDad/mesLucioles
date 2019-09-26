@@ -27,7 +27,9 @@ def addUser(*args):
     #timezone = 'fr_FR'
     user = models.User(email=email, password=passwd, firstname=firstname, timezone=timezone)
     db.session.add(user)
+    user.set_password(passwd)
     db.session.commit()
+    print("User added: {}, {}, {}, {}".format(email, passwd, firstname, timezone))
 
 def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
     """
@@ -80,6 +82,8 @@ def addTypes():
     db.session.add(models.Spending.Type(name=u"Charges"))
     db.session.add(models.Spending.Type(name=u"Bien-être"))
     db.session.add(models.Spending.Type(name=u"Sorties"))
+    db.session.add(models.Spending.Type(name=u"Maison"))
+    db.session.add(models.Spending.Type(name=u"Virement"))
     db.session.commit()
 
 
@@ -104,9 +108,6 @@ if __name__ == '__main__':
         a = models.User(email='b@t', firstname='Batoo')
         a.set_password('coucou')
         db.session.add(a)
-        b = models.User(email='b@2t')
-        b.set_password('coucou23')
-        db.session.add(b)
         db.session.commit()
     
     # test of adding a bill

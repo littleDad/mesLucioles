@@ -3,7 +3,6 @@
 from secrets import SECRET_KEY
 import os
 
-#APP_NAME = "La Psycholoc"
 APP_NAME = "Hackz' your friends (beta!)"
 
 from logger_04 import LogFile
@@ -32,7 +31,7 @@ MAIL_USERNAME = None
 MAIL_PASSWORD = None
 
 # administrator list
-ADMINS = ['bat@baptabl.fr', 'al.bert95@hotmail.fr']
+ADMINS = []
 
 
 # allowing searches in spendings

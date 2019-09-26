@@ -3,7 +3,7 @@
         <tr>
             <th><span class="glyphicon glyphicon-user"></span></th>
             <th>payé</th>
-            <th>emprunté</th>
+{#            <th>emprunté</th>#}
             <th>Balance</th>
             <th>Virements</th>
         </tr>
@@ -23,6 +23,7 @@
                     {{ (users_given_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
+            {#
             <td>
                 {% if users_borrowed_money[user.id] == 0 %}
                     --
@@ -30,6 +31,7 @@
                     {{ (users_borrowed_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
+            #}
             <td
                 style=
                     {% if users_balances[user.id] < 0 %}"color: red">

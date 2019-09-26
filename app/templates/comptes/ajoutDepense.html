@@ -15,6 +15,13 @@ $(document.body).on('click', '.dropdown-menu li', function(event) {
     $("#"+$dataName).val(return_value);
     return false;
    });
+
+function toggle(source) {
+    checkboxes = document.getElementsByName('bill_user_ids');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
 </script>
 
 <div class="row clearfix col-md-4">
@@ -94,6 +101,7 @@ $(document.body).on('click', '.dropdown-menu li', function(event) {
 
         <div class="form-group">
             {{ form.bill_user_ids.label }}
+            <p><input type="checkbox" onClick="toggle(this)" /> <b>Tous</b> ou :</p>
             {{ form.bill_user_ids }}
         </div>
 

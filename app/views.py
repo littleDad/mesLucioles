@@ -113,8 +113,8 @@ def internal_error(error):
 @coreApp.route('/index')
 @login_required
 def index():
-    print g.user
-    return render_template('index.html', menu_not_collapsed=False, app_name=app_name)
+    return redirect(url_for('comptesBis'))
+    # return render_template('index.html', menu_not_collapsed=False, app_name=app_name)
 
 
 @coreApp.route('/thewall')

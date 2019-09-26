@@ -21,6 +21,7 @@ QUICKSTART :
   * lancer l'appli : ./run.py
 
   * se connecter avec un navigateur web sur localhost:5000 avec les id b@t/coucou
+  * ajouter un user : ./administration 0 bob@laposte.net password1234
 
 
 
