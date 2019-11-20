@@ -1,14 +1,15 @@
-Appli de gestion de lucioles.
-Permet de gérer les calendriers, anniversaires,  comptes et autres
-joyeusetés avec ses amis :-)
+Appli de gestion de colocs.
+Permet de gérer les comptes (et peut-être un jour les calendriers, anniversaires et autres joyeusetés) !
 
-Ce module est codé en python avec le framework Flask.
+Ce module est codé en python 3, avec Flask.
 
 
 ###############################################################################
 QUICKSTART :
+  * modifier votre SECRET_KEY (config.py)
+
   * créer l'environnement virtuel :
-        virtualenv env -p /usr/bin/python2 --no-site-packages
+        virtualenv env -p /usr/bin/python3 --no-site-packages
 
   * installer les dépendances dans cet environnement
         source env/bin/activate
@@ -16,13 +17,15 @@ QUICKSTART :
 
   * générer la base : ./db_create.py
 
-  * l'initialiser avec un jeu de test : ./administration init
+  * l'initialiser avec un jeu de test : ./administration.py init
 
   * lancer l'appli : ./run.py
 
   * se connecter avec un navigateur web sur localhost:5000 avec les id b@t/coucou
-  * ajouter un user : ./administration 0 bob@laposte.net password1234
+  
 
+Additionnel :
+  * ajouter un user : ./administration 0 bob@laposte.net password1234
 
 
 ###############################################################################
@@ -46,10 +49,9 @@ ToDo :
 - "tous" pour cocher les cases de 'pour qui cette dépense ?' dans ajoutDépense
 
 
-- encrypter et améliorer la gestion des mots de passe
 - champ de recherche pour les factures
 - centraliser (encapsuler dans une méthode de User) l'ajout et la suppression de dépense actuellement contrôlés à l'arrache dans models.Spending (c'est vraiment très sale, sorte de trigger manuel sur une classe étrangère ("Users" et son attribut "depense")...) 
-- rembourrer les logs, c'est toujours pratique le jour où on en a besoin... !
+- rembourrer les logs, c'est toujours pratique
 
 - formulaire de modification de dépense (avec précision de qui a ajouté la dépense à l'origine + gérer minutieusement le rétablissement des balances des users)
 - page "effectuer un remboursement"
