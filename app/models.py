@@ -87,13 +87,32 @@ class User(db.Model):
             return User.query.filter_by(id=user_id).first().email
         return user
 
-    def getGiven_money(self):
-        given_money = db.session.query(func.sum(Spending.total)).filter_by(payer_id=self.id).all()[0][0]
-        if given_money == None:
-            given_money = 0.0
+    def get_total_paid(self):
+        total_paid = db.session.query(func.sum(Spending.total)).filter_by(payer_id=self.id).all()[0][0]
+        if total_paid is None:
+            total_paid = 0.0
         return float("{0:.2f}".format(
-            given_money
+            total_paid
         ))
+
+    def get_total_paid_without_transfers(self):
+        total_paid_without_transfers = db.session.query(
+            func.sum(Spending.total)).filter_by(payer_id=self.id).filter(Spending.s_type != 'Virement').all()[0][0]
+        if total_paid_without_transfers is None:
+            total_paid_without_transfers = 0.0
+        return float("{0:.2f}".format(
+            total_paid_without_transfers
+        ))
+
+    def get_transfers_total(self):
+        trasnsfers_total_amount = db.session.query(
+            func.sum(Spending.total)).filter_by(payer_id=self.id, s_type='Virement').all()[0][0]
+        if trasnsfers_total_amount == None:
+            trasnsfers_total_amount = 0.0
+        return float("{0:.2f}".format(
+            trasnsfers_total_amount
+        ))
+
     def getBorrowed_money(self):
         borrowed_money = db.session.query(
             func.sum(Spending.Part.total)
@@ -105,16 +124,7 @@ class User(db.Model):
         ))
     def getBalance(self):
         return float("{0:.2f}".format(
-            self.getGiven_money() - self.getBorrowed_money()
-        ))
-
-    def get_transfers_total(self):
-        trasnsfers_total_amount = db.session.query(
-            func.sum(Spending.total)).filter_by(payer_id=self.id, s_type='Virement').all()[0][0]
-        if trasnsfers_total_amount == None:
-            trasnsfers_total_amount = 0.0
-        return float("{0:.2f}".format(
-            trasnsfers_total_amount
+            self.get_total_paid() - self.getBorrowed_money()
         ))
 
 

@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th><span class="glyphicon glyphicon-user"></span></th>
-            <th title="Montant total des dépenses payées (virements inclus)">Total payé</th>
-            <th title="Montant total des virements">Part de virements</th>
+            <th title="Montant total des dépenses payées (virements exlus)">Total dépenses payées</th>
+            <th>Total virements</th>
 {#            <th>emprunté</th>#}
             <th>Balance</th>
             <th>Virements</th>
@@ -18,10 +18,10 @@
                 {% endif %}
             </a></td>
             <td>
-                {% if users_given_money[user.id] == 0 %}
+                {% if users_total_paid[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (users_given_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ (users_total_paid[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             <td>

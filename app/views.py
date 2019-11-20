@@ -386,12 +386,12 @@ def comptes(spends_page):
     # list users' balances
     if spends_page == 'balances':
         users = User.query.order_by('user_id').all()
-        users_given_money = {}
+        users_total_paid = {}
         # users_borrowed_money = {}
         users_balances = {}
         users_transfers = {}
         for user in users:
-            users_given_money[user.id] = user.getGiven_money()
+            users_total_paid[user.id] = user.get_total_paid_without_transfers()
             # users_borrowed_money[user.id] = user.getBorrowed_money()
             users_balances[user.id] = user.getBalance()
             users_transfers[user.id] = user.get_transfers_total()
@@ -401,7 +401,7 @@ def comptes(spends_page):
             app_name=app_name,
             spends_page=spends_page,
             users=users,
-            users_given_money=users_given_money,
+            users_total_paid=users_total_paid,
             # users_borrowed_money=users_borrowed_money,
             users_balances=users_balances,
             users_transfers=users_transfers
