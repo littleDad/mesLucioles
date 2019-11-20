@@ -101,6 +101,9 @@ class SpendingForm(Form):
                 return False
             self.total.data = (self.total.data).replace(" ","").replace(",",".")
             self.total.data = float(self.total.data)
+            if self.total.data <= 0:
+                self.total.errors.append(u"désolé, mais une dépense d'un montant nul ou négatif, ça n'existe pas !")
+                return False
             if len(str(self.total.data - int(self.total.data))) > 4:  # how many centimes?
                 self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
                 return False
