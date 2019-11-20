@@ -45,17 +45,12 @@ class User(db.Model):
 
     def get_id(self):
         "should return a unique identifier for the user, in unicode format"
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
-
+        return str(self.id)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        print('COUCOU')
         print(self)
         return check_password_hash(self.password, password)
 
@@ -76,10 +71,9 @@ class User(db.Model):
     def get_balance(self):
         return self.balance
 
-    def edit_money(self, m_type, order, amount):
-        exec('self.'+str(m_type)+str(order)+'= '+str(amount))
-        exec('print(self.'+str(m_type)+')')
-
+    # def edit_money(self, m_type, order, amount):
+    #     exec('self.'+str(m_type)+str(order)+'= '+str(amount))
+    #     exec('print(self.'+str(m_type)+')')
 
     def getName(self):
         user = User.query.filter_by(id=self.id).first().firstname
@@ -114,6 +108,14 @@ class User(db.Model):
             self.getGiven_money() - self.getBorrowed_money()
         ))
 
+    def get_transfers_total(self):
+        trasnsfers_total_amount = db.session.query(
+            func.sum(Spending.total)).filter_by(payer_id=self.id, s_type='Virement').all()[0][0]
+        if trasnsfers_total_amount == None:
+            trasnsfers_total_amount = 0.0
+        return float("{0:.2f}".format(
+            trasnsfers_total_amount
+        ))
 
 
 class WallMessage(db.Model):

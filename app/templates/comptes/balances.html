@@ -2,7 +2,8 @@
     <thead>
         <tr>
             <th><span class="glyphicon glyphicon-user"></span></th>
-            <th>payé</th>
+            <th title="Montant total des dépenses payées (virements inclus)">Total payé</th>
+            <th title="Montant total des virements">Part de virements</th>
 {#            <th>emprunté</th>#}
             <th>Balance</th>
             <th>Virements</th>
@@ -21,6 +22,13 @@
                     --
                 {% else %}
                     {{ (users_given_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                {% endif %}
+            </td>
+            <td>
+                {% if users_transfers[user.id] == 0 %}
+                    --
+                {% else %}
+                    {{ (users_transfers[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
                 {% endif %}
             </td>
             {#

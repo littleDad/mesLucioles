@@ -240,37 +240,37 @@ def getUsers():
     users = User.query.order_by('last_connection desc').all()
     return render_template('getUsers.html', app_name=app_name, users=users)
 
-@coreApp.route('/addUser', methods=['GET', 'POST'])
-@login_required
-def addUser():
-    """cette méthode devrait ptet etre une méthode static de la classe User mmh ?
-    """
-    #print current_user.balance.user_id
-    form = AddUserForm()
-    if form.validate_on_submit():
-        user = User(
-            email=form.email.data,
-            password=form.password.data,
-            firstname=form.firstname.data,
-            timezone=form.timezone.data
-        )
-        db.session.add(user)
-        db.session.commit()
-        u_balance = Balance(user_id=user.id)
-        db.session.add(u_balance)
-        db.session.commit()
-
-        user.balance = u_balance.id
-        db.session.commit()
-        flash(u'utilisateur enregistré !')
-    else:
-        for errors in form.errors.values():
-            for error in errors:
-                flash(error)
-    return render_template('addUser.html',
-        app_name=app_name,
-        form=form
-    )
+# @coreApp.route('/addUser', methods=['GET', 'POST'])
+# @login_required
+# def addUser():
+#     """cette méthode devrait ptet etre une méthode static de la classe User mmh ?
+#     """
+#     #print current_user.balance.user_id
+#     form = AddUserForm()
+#     if form.validate_on_submit():
+#         user = User(
+#             email=form.email.data,
+#             password=form.password.data,
+#             firstname=form.firstname.data,
+#             timezone=form.timezone.data
+#         )
+#         db.session.add(user)
+#         db.session.commit()
+#         u_balance = Balance(user_id=user.id)
+#         db.session.add(u_balance)
+#         db.session.commit()
+#
+#         user.balance = u_balance.id
+#         db.session.commit()
+#         flash(u'utilisateur enregistré !')
+#     else:
+#         for errors in form.errors.values():
+#             for error in errors:
+#                 flash(error)
+#     return render_template('addUser.html',
+#         app_name=app_name,
+#         form=form
+#     )
 
 
 
@@ -384,13 +384,14 @@ def comptes(spends_page):
     if spends_page == 'balances':
         users = User.query.order_by('user_id').all()
         users_given_money = {}
-        users_borrowed_money = {}
+        # users_borrowed_money = {}
         users_balances = {}
-        user = users[0]
+        users_transfers = {}
         for user in users:
             users_given_money[user.id] = user.getGiven_money()
-            users_borrowed_money[user.id] = user.getBorrowed_money()
+            # users_borrowed_money[user.id] = user.getBorrowed_money()
             users_balances[user.id] = user.getBalance()
+            users_transfers[user.id] = user.get_transfers_total()
 
         return render_template(
             'comptes.html',
@@ -398,8 +399,9 @@ def comptes(spends_page):
             spends_page=spends_page,
             users=users,
             users_given_money=users_given_money,
-            users_borrowed_money=users_borrowed_money,
-            users_balances=users_balances
+            # users_borrowed_money=users_borrowed_money,
+            users_balances=users_balances,
+            users_transfers=users_transfers
         )
 
     # else
