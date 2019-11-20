@@ -19,7 +19,7 @@
     </thead>
     <tbody>
         {% for depense in spendings %}
-            <tr>
+            <tr title="{{ depense.comment }}">
                 <td>{{ times[depense.id] }}</td>
                 <td>{{ depense.s_type }}</td> 
                 <td>{{ depense.label }}</td>

@@ -139,8 +139,7 @@ class Spending(db.Model):
     total = db.Column(db.Float(10))
     payer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     parts = db.relationship('Part', backref='spending', lazy='dynamic')
-    #comment = db.Column(db.String(140))
-
+    comment = db.Column(db.String(400))
 
     def __repr__(self):
         return '<Dépense %r (n°%r) payer:%r>' % (self.label, self.id, self.payer_id)
@@ -148,8 +147,6 @@ class Spending(db.Model):
     def getDate(self, user):
         """return spending (self) bought date attribute according to user timezone"""
         return format_date(self.s_date, "d MMM", locale=user.timezone)
-
-
 
     def computeParts(self, c_session, len_user_ids):
         """divide a spending into money parts for users.
@@ -195,7 +192,6 @@ class Spending(db.Model):
         parts = makeParts(self.total, len_user_ids, self.label, self.timestamp)
         return parts
 
-
     @staticmethod
     def getPart(Spending, user_id):
         for part in Spending.parts:
@@ -211,4 +207,3 @@ class Spending(db.Model):
 
     class Type(db.Model):
         name = db.Column(db.String(30), primary_key = True)
-
