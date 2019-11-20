@@ -1,4 +1,4 @@
-#!env/bin/python
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 from migrate.versioning import api

@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
-from flask.ext.wtf import Form
-from wtforms import widgets, StringField, BooleanField, FloatField, TextField, PasswordField, DateField, SelectMultipleField, SelectField, FormField, SubmitField, HiddenField, FieldList, IntegerField
+from flask_wtf import FlaskForm as Form
+from wtforms import widgets, StringField, PasswordField, DateField, SelectMultipleField, SelectField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, required, optional
 
 from app.models import User
@@ -50,7 +50,7 @@ class EditUserForm(Form):
             return True
         else:
             # implement some other checks on this new password
-            print len(self.new_password.data)
+            print(len(self.new_password.data))
             if len(self.new_password.data) < 8:
                 self.new_password.errors.append(u'ton mot de passe doit contenir au moins 8 caractères !')
                 return False

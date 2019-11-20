@@ -1,9 +1,8 @@
 # -*- coding: utf8 -*-
 
-from secrets import SECRET_KEY
 import os
 
-APP_NAME = "Hackz' your friends (beta!)"
+APP_NAME = "Glouthune"
 
 from logger_04 import LogFile
 LOGGER = LogFile('data/app.log')
@@ -31,8 +30,10 @@ MAIL_USERNAME = None
 MAIL_PASSWORD = None
 
 # administrator list
-ADMINS = []
+ADMINS = ['bat@baptabl.fr']
 
 
 # allowing searches in spendings
 WHOOSH_ENABLED = True
+
+SECRET_KEY = "CHANGE ME!"

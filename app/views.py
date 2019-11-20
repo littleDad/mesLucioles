@@ -4,7 +4,7 @@ from sys import exc_info
 from config import LOGGER
 
 from flask import render_template, flash, redirect, session, url_for, request, g
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user
 
 from app import coreApp, db, lm
 from .forms import LoginForm, LostPasswdForm, EditUserForm, AddUserForm, SpendingForm
@@ -140,7 +140,7 @@ def login():
             for errors in form.errors.values():
                 for error in errors:
                     flash(error)
-                    print error
+                    print(error)
             return render_template('login.html', form=form, app_name=app_name)
 
 @lm.user_loader
@@ -151,14 +151,11 @@ def loadUser(id):  #NOTE: user ids in Flask-Login are always unicode strings
 
 def try_login(email, password):
 # TODO: investigate on this method, optimize
-    print 'on passe dans try_login'
     user = User.query.filter_by(email = email).first()
     if user == None:
-        print 'user is NONE'
         flash(u'mmh... mauvaise adresse mail !')
         return redirect(url_for('index'))
     elif user.check_password(password):
-        print 'mail et password concordent'
         remember_me = False
         if 'remember_me' in session:
             remember_me = session['remember_me']
@@ -166,9 +163,7 @@ def try_login(email, password):
         login_user(user, remember = remember_me)
     else:
         flash(u'mauvais mot de passe')
-        print 'WRONG PASSWORD'
         return redirect(url_for('index'))
-    print 'on redirige'
     return redirect(request.args.get('next') or url_for('index'))
 
 
@@ -198,7 +193,7 @@ def lostPasswd():
         for errors in form.errors.values():
             for error in errors:
                 flash(error)
-                print error
+                print(error)
         return render_template('lostPasswd.html', form=form, app_name=app_name)
 
 
@@ -231,7 +226,7 @@ def getUser(email):
             for errors in form.errors.values():
                 for error in errors:
                     flash(error)
-                    print error
+                    print(error)
             form.firstname.data = g.user.firstname
             form.email.data = g.user.email
             form.timezone.data = g.user.timezone
@@ -330,7 +325,7 @@ def comptes(spends_page):
             for errors in form.errors.values():
                 for error in errors:
                     flash(error)
-                    print error
+                    print(error)
 
             # query on spending.types
             types = []
@@ -439,7 +434,7 @@ def getSpending(id):
             for errors in form.errors.values():
                 for error in errors:
                     flash(error)
-                    print error
+                    print(error)
 
             users = [(user.id, user.getName()) for user in User.query.order_by('id')]
             form.payer_id.choices = users
@@ -485,7 +480,7 @@ def delSpending(id):
         ))
 
     else:
-        print "on supprime %s" % bill.label
+        print("on supprime %s" % bill.label)
         try:
             # delete associated parts and reset users' balances
             parts = db.session.query(Spending.Part).filter_by(

@@ -1,4 +1,4 @@
-#!../maelstromEnv/bin/python
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 # This script will downgrade the database one revision. You can run it multiple times to downgrade several revisions.

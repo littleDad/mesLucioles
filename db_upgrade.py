@@ -1,4 +1,4 @@
-#!../maelstromEnv/bin/python
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 # upgrade the database to the latest revision, by applying the migration scripts stored in the database repository

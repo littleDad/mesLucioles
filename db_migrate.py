@@ -1,4 +1,4 @@
-#!ccc-env/bin/python2
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 
 import imp

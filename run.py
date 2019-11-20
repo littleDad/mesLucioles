@@ -1,5 +1,5 @@
-#!env/bin/python2
-# -*- coding: utf8 -*-
+#!/usr/bin/env python
+# coding: utf8
 
 from app import coreApp
-coreApp.run(debug=True, port=5000)
+coreApp.run(debug=False, port=5000)

@@ -7,18 +7,15 @@ coreApp = Flask(__name__)
 coreApp.config.from_object('config')
 
 # db
-#from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy(coreApp)
 
 
 # sessions, users and logins
-import os
-from flask.ext.login import LoginManager # handle our users logged in state
-from config import basedir
-lm = LoginManager() ### à terme, cccLm ?
+from flask_login import LoginManager  # handle our users logged in state
+lm = LoginManager()
 lm.init_app(coreApp)
-lm.login_view = 'login' # specifies the view which logs users in (for @login_required decorator)
+lm.login_view = 'login'  # specifies the view which logs users in (for @login_required decorator)
 
 
 from app import views, models

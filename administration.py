@@ -1,4 +1,4 @@
-#!env/bin/python2
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 """
 this admin script allows you to :
@@ -13,12 +13,11 @@ from app import models
 from app.models import User, Spending
 from flask import Flask
 from babel.dates import datetime
-from time import sleep
 
 coreApp = Flask(__name__)
 coreApp.config.from_object('config')
 
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy(coreApp)
 
 
@@ -43,7 +42,7 @@ def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
         bill = Spending()
         bill.timestamp = datetime.utcnow()
         bill.s_type = s_type
-        bill.label = unicode(label, 'utf-8')
+        bill.label = label
         bill.total = total
         bill.payer_id = payer_id
         db.session.add(bill)
@@ -71,7 +70,7 @@ def addBill(s_type, s_label, s_total, s_payer_id, s_user_ids):
         return 1
     except:
         db.session.rollback()
-        print exc_info()
+        print(exc_info())
         return 0
 
 def addTypes():
@@ -119,4 +118,4 @@ if __name__ == '__main__':
         user_ids = [1, 2]
         addBill(s_type, label, total, payer_id, user_ids) #spend=models.Spending.query.filter_by(id=1).first())
         
-        print 'données de test initiales ajoutées: OK.'
+        print('données de test initiales ajoutées: OK.')

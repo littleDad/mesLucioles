@@ -23,15 +23,15 @@ class User(db.Model):
     @staticmethod
     def useless_method():
         "I am static, that's why you can call me without any user (self) parameter !"
-        print 'i am an useless static method'
+        print('i am an useless static method')
 
     def avatar(self):
         return 'chemin-vers-l-image'
 
     def is_authenticated(self):
         "should just return True unless the object represents a user that should not be allowed to authenticate for some reason"
-        print 'AUTHENTICATED'
-        print 'user_id:', self.get_id()
+        print('AUTHENTICATED')
+        print('user_id:', self.get_id())
         return True 
 
     def is_active(self):
@@ -55,8 +55,8 @@ class User(db.Model):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        print 'COUCOU'
-        print self
+        print('COUCOU')
+        print(self)
         return check_password_hash(self.password, password)
 
     def getPasswd(self):
@@ -78,7 +78,7 @@ class User(db.Model):
 
     def edit_money(self, m_type, order, amount):
         exec('self.'+str(m_type)+str(order)+'= '+str(amount))
-        exec('print self.'+str(m_type))
+        exec('print(self.'+str(m_type)+')')
 
 
     def getName(self):

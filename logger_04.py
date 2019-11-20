@@ -27,11 +27,11 @@ class LogFile(logging.Logger):
         logger = self
 
         if 'error' in kwargs:
-            print 'error YES'
+            print('error YES')
             kwargs['level'] = 'error'
         
         if 'exception' in kwargs:
-            print 'exception YES'
+            print('exception YES')
             kwargs['level'] = 'exception'
 
         if 'level' in kwargs:
