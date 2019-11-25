@@ -485,7 +485,6 @@ def delSpending(id):
         ))
 
     else:
-        print("on supprime %s" % bill.label)
         try:
             # delete associated parts and reset users' balances
             parts = db.session.query(Spending.Part).filter_by(

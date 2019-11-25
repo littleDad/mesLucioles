@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import math
 
 from flask_wtf import FlaskForm as Form
 from wtforms import widgets, StringField, PasswordField, DateField, SelectMultipleField, SelectField, SubmitField, HiddenField, TextAreaField
@@ -103,11 +104,11 @@ class SpendingForm(Form):
                 self.bill_user_ids.errors.append(u"à qui profite cette dépense ?")
                 return False
             self.total.data = self.total.data.replace(" ", "").replace(",", ".")
-            self.total.data = float(self.total.data)
-            if self.total.data <= 0:
+            if float(self.total.data) <= 0:
                 self.total.errors.append(u"désolé, mais une dépense d'un montant nul ou négatif, ça n'existe pas !")
                 return False
-            if len(str(self.total.data - int(self.total.data))) > 4:  # how many centimes?
-                self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
-                return False
+            if len(self.total.data.split('.')) > 1:  # there are centimes: how many?
+                if len(self.total.data.split('.')[1]) > 2:
+                    self.total.errors.append(u't\'es sûr de tes centimes là ? petit chenapan !')
+                    return False
             return True

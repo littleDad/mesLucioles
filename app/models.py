@@ -162,7 +162,7 @@ class Spending(db.Model):
         """divide a spending into money parts for users.
             return a list of (user, to_pay) couples
         """
-        def makeParts(value, p_size, spending_name, spending_time):
+        def makeParts(value, parts_size, spending_name, spending_time):
             """make p_size parts with the value.
             if centimes left, we allocate these lost ones to a random user. sometimes
                 it's positive numbers, sometimes not!
@@ -175,17 +175,17 @@ class Spending(db.Model):
             value = dec(str(value))  # I'll probably go to hell for this...
 
             # attribution aux parts de la valeur entière divisible par p_size
-            parts = [int(value/p_size)] * p_size
+            parts = [int(value/parts_size)] * parts_size
 
             # on transforme le reste en centimes que l'on distribue
             left_centimes = int(100 * (value - sum(parts)))
 
             # attribution aux parts des centimes restants
             for idx, part in enumerate(parts):
-                parts[idx] += (left_centimes/p_size) / 100.
+                parts[idx] += (left_centimes//parts_size)/100  # only keep 2 decimals
 
             # on attribue les centimes restants à un user aléatoire
-            the_last_centime = (left_centimes % p_size) / 100.
+            the_last_centime = (left_centimes % parts_size) / 100
             if the_last_centime != 0:
                 the_one = randint(0, len(parts)-1)
                 parts[the_one] += the_last_centime
