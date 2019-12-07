@@ -26,6 +26,11 @@ QUICKSTART :
 
 Additionnel :
   * ajouter un user : ./administration 0 bob@laposte.net password1234
+  * to mgirate:
+    * change the model
+    * run ./db_upgrade
+    * run ./db_migrate
+
 
 
 ###############################################################################
