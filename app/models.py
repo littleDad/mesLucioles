@@ -1,13 +1,16 @@
 # -*- coding: utf8 -*-
 
-from app import db
-from babel.dates import format_date
-from config import WHOOSH_ENABLED, LOGGER # pour le support de la recherche dans les factures, voir : https://github.com/miguelgrinberg/microblog/blob/master/app/models.py
-from random import randint
 from decimal import Decimal as dec, getcontext
+from random import shuffle
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from babel.dates import format_date
 from sqlalchemy.sql import func
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from app import db
+from config import \
+    LOGGER  # pour le support de la recherche dans les factures, voir : https://github.com/miguelgrinberg/microblog/blob/master/app/models.py
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -162,33 +165,28 @@ class Spending(db.Model):
         """divide a spending into money parts for users.
             return a list of (user, to_pay) couples
         """
-        def makeParts(value, parts_size, spending_name, spending_time):
-            """make p_size parts with the value.
+        def makeParts(value, nb_parts, spending_name, spending_time):
+            """make nb_parts parts with the value.
             if centimes left, we allocate these lost ones to a random user. sometimes
                 it's positive numbers, sometimes not!
             my priority was to NOT have lost centimes.
 
-            P.S.: sorry for this madness with floating and decimal numbers, there wasn't
-                any 'easy' way!
+            note: all the computation deals with integer by *100 at the beginning and /100 at the end to save our souls
+            from computers floating madness!
             """
             getcontext().prec = 6
-            value = dec(str(value))  # I'll probably go to hell for this...
+            int_value_x_100 = int(dec(value) * 100)  # let's work with integer
 
-            # attribution aux parts de la valeur entière divisible par p_size
-            parts = [int(value/parts_size)] * parts_size
+            parts = [int_value_x_100 // nb_parts] * nb_parts
+            left_centimes = int_value_x_100 % nb_parts
+            while left_centimes > 0:
+                for idx, part in enumerate(parts):
+                    if left_centimes > 0:
+                        parts[idx] += 1
+                        left_centimes -= 1
 
-            # on transforme le reste en centimes que l'on distribue
-            left_centimes = int(100 * (value - sum(parts)))
-
-            # attribution aux parts des centimes restants
-            for idx, part in enumerate(parts):
-                parts[idx] += (left_centimes//parts_size)/100  # only keep 2 decimals
-
-            # on attribue les centimes restants à un user aléatoire
-            the_last_centime = (left_centimes % parts_size) / 100
-            if the_last_centime != 0:
-                the_one = randint(0, len(parts)-1)
-                parts[the_one] += the_last_centime
+            parts = [part / 100 for part in parts]  # go back to float numbers
+            shuffle(parts)  # because expensive amount are always at the beginning, let's shuffle this!
 
             # any error is logged. because money is money. no jokes!
             if float(value) != float(sum(parts)):
