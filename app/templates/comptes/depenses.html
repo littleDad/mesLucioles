@@ -23,7 +23,7 @@
                 <td>{{ times[depense.id] }}</td>
                 <td>{{ depense.s_type }}</td> 
                 <td>{{ depense.label }}</td>
-                <td>{{ (depense.total, '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}</td>
+                <td>{{ ('%0.2f' % depense.total, '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}</td>
                 <td>
                     {% if depense.payer_id == g.user.id %}
                         Moi
@@ -34,7 +34,7 @@
                     
                 <td>{% if my_parts[depense.id] == 0 %}--
                 {% else %}
-                {{ (my_parts[depense.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                {{ ('%0.2f' % my_parts[depense.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
                 </td>
                 

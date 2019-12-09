@@ -21,14 +21,14 @@
                 {% if users_total_paid[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (users_total_paid[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ ('%0.2f' % users_total_paid[user.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
             </td>
             <td>
                 {% if users_transfers[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (users_transfers[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ ('%0.2f' % users_transfers[user.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
             </td>
             {#
@@ -36,7 +36,7 @@
                 {% if users_borrowed_money[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (users_borrowed_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ ('%0.2f' % users_borrowed_money[user.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
             </td>
             #}
@@ -49,7 +49,7 @@
                 {% if users_balances[user.id] == 0 %}
                     --
                 {% else %}
-                    {{ (users_balances[user.id], '€')|join(' ')|replace(".", ",")|replace(',0 ', ' ') }}
+                    {{ ('%0.2f' % users_balances[user.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
             </td>
             <td>{% if user != g.user %}<a><span class="glyphicon glyphicon-usd"></span><span class="glyphicon glyphicon-new-window"></span></a><!-- pay back this user -->{% endif %}</td>
