@@ -32,5 +32,3 @@ Additionnel :
     * change the model
     * run ./db_upgrade
     * run ./db_migrate
-
-

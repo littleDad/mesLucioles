@@ -14,7 +14,7 @@
     {% else %}
     <thead>
         <tr>
-            <th>Date</th><th>Catégorie</th><th>Titre</th><th>Montant</th><th>Payeur</th><th>Ma part</th><!-- <th>modifier dépense</th> --><th><!-- supprimer dépense --></th><th><!-- modifier dépense répétée si type = 'repeated' --></th>
+            <th>Date</th><th>Catégorie</th><th>Titre</th><th>Montant</th><th>Payeur</th><th>Ma part</th>
         </tr>
     </thead>
     <tbody>
@@ -36,10 +36,6 @@
                 {% else %}
                 {{ ('%0.2f' % my_parts[depense.id], '€')|join(' ')|replace(".", ",")|replace(',00 ', ' ') }}
                 {% endif %}
-                </td>
-                
-                <td>
-                    <!-- <a href="{{ url_for('getSpending', id=depense.id) }}"> --><em class="glyphicon glyphicon-pencil"></em><!-- </a> -->
                 </td>
                 
                  <td>

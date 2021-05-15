@@ -34,30 +34,6 @@ ToDo:
     >
         <em class="glyphicon glyphicon-tasks"></em> balances
     </a>
-    <a href="{{ url_for('comptes', spends_page='ext_remboursements') }}"
-        class="btn btn-default disabled"
-        type="button"
-        title="remboursement provenant d'une personne en-dehors de la CCC"
-    >
-        <em class="glyphicon glyphicon-transfer"></em> remboursements extérieurs
-    </a>
-    <a href="{{ url_for('comptes', spends_page='cadeaux') }}"
-        class="btn btn-default disabled"
-        type="button"
-        title="les cadeaux, c'est toute une histoire... ! :)"
-    >
-        <em class="glyphicon glyphicon-gift"></em> cadeaux
-    </a>
-    <a href="{{ url_for('comptes', spends_page='stats') }}"
-        class="btn btn-default disabled"
-        type="button"
-        title="un peu de suivi peut ne pas faire de mal"
-    >
-        <em class="glyphicon glyphicon-stats"></em> statistiques <span style="font-size: 7pt"><!--(pour Liang...)--></span>
-        {#
-là-dedans, ça serait bien de mettre un diagramme bâton avec MES dépenses (label et montant) sur le mois (et un autre avec mes dépenses depuis le début du site) !
-        #}
-    </a>
 {% endblock %}
 
 {% block content %}

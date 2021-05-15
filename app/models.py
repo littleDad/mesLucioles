@@ -140,8 +140,6 @@ class WallMessage(db.Model):
     id = db.Column(db.Integer, primary_key = True)
 
 
-
-
 class Spending(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     # attention, à l'utilisation : enregistrer le temps UTC, parce qu'on a potentiellement des users du monde entier !
@@ -159,7 +157,7 @@ class Spending(db.Model):
 
     def getDate(self, user):
         """return spending (self) bought date attribute according to user timezone"""
-        return format_date(self.s_date, "d MMM", locale=user.timezone)
+        return format_date(self.s_date, "d MMM YYYY", locale=user.timezone)
 
     def computeParts(self, c_session, len_user_ids):
         """divide a spending into money parts for users.
