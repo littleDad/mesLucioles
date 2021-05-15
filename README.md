@@ -19,6 +19,8 @@ QUICKSTART :
 
   * l'initialiser avec un jeu de test : ./administration.py init
 
+  * créer 2 var d'environnement (par exemple avec direnv et un .envrc) : SECRET_KEY et PORT (ce second est optionnel)
+
   * lancer l'appli : ./run.py
 
   * se connecter avec un navigateur web sur localhost:5000 avec les id b@t/coucou

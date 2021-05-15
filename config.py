@@ -36,4 +36,5 @@ ADMINS = ['bat@baptabl.fr']
 # allowing searches in spendings
 WHOOSH_ENABLED = True
 
-SECRET_KEY = "CHANGE ME!"
+SECRET_KEY = os.environ['SECRET_KEY']
+
