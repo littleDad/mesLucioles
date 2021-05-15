@@ -104,6 +104,11 @@ class SpendingForm(Form):
                 self.bill_user_ids.errors.append(u"à qui profite cette dépense ?")
                 return False
             self.total.data = self.total.data.replace(" ", "").replace(",", ".")
+            try:
+                float(self.total.data)
+            except ValueError:
+                self.total.errors.append(f"désolé, mais '{self.total.data}' n'est pas un montant de dépense valide !")
+                return False
             if float(self.total.data) <= 0:
                 self.total.errors.append(u"désolé, mais une dépense d'un montant nul ou négatif, ça n'existe pas !")
                 return False
